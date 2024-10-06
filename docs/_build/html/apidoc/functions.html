@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html  lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+      <title>Functions</title>
+    
+          <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="../_static/theme.css " type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script src="../_static/documentation_options.js?v=2709fde1"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="../_static/theme-vendors.js"></script> -->
+      <script src="../_static/theme.js" defer></script>
+    
+  <link rel="index" title="Index" href="../genindex.html" />
+  <link rel="search" title="Search" href="../search.html" />
+  <link rel="prev" title="Classes" href="classes.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="../index.html" class="home-link">
+    
+      <span class="site-name">OpenKet</span>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">Quick search</span>
+    <div class="searchformwrapper">
+      <form class="search" action="../search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="Search" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+  
+    <div class="sidebar-group">
+      <p class="caption">
+        <span class="caption-text"><a href="../index.html#openket-documentation">openket documentation</a></span>
+      </p>
+      <ul class="">
+        
+          <li class="toctree-l1 ">
+            
+              <a href="../installation.html" class="reference internal ">Installation</a>
+            
+
+            
+          </li>
+
+        
+          <li class="toctree-l1 ">
+            
+              <a href="apidoc.html" class="reference internal ">API documentation</a>
+            
+
+            
+          </li>
+
+        
+      </ul>
+    </div>
+  
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="apidoc.html">API documentation</a> &raquo;</li>
+    
+    <li>Functions</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+  <li class="prev">
+    <a href="classes.html"
+       title="previous chapter">← Classes</a>
+  </li>
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <section id="functions">
+<span id="id1"></span><h1>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h1>
+<section id="metrics-on-states-or-operators">
+<h2>Metrics on states or operators<a class="headerlink" href="#metrics-on-states-or-operators" title="Link to this heading">¶</a></h2>
+<section id="adj">
+<h3>Adj<a class="headerlink" href="#adj" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="openket.core.metrics.Adj">
+<span class="sig-name descname"><span class="pre">Adj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.metrics.Adj" title="Link to this definition">¶</a></dt>
+<dd><p>This function calculates the hermitian conjugate of a quantum object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A</strong> (<a class="reference internal" href="classes.html#openket.core.diracobject.DiracObject" title="openket.core.diracobject.DiracObject"><em>DiracObject</em></a>) – Openket expression, this could be a Bra, Ket, Operator or complex number.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The hermitian conjugate of <cite>A</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="classes.html#openket.core.diracobject.DiracObject" title="openket.core.diracobject.DiracObject">DiracObject</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="examples">
+<h4>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Adj</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">I</span><span class="p">)</span>
+<span class="go">1-I</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Adj</span><span class="p">(</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="go">&lt;0|</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Adj</span><span class="p">(</span><span class="n">Bra</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="go">|1&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Of course, it’s all possible to calculate the norm of any state.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">I</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span>
+<span class="go">I|0&gt; - 4|1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span> <span class="o">=</span> <span class="n">Adj</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">*</span><span class="n">w</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">norm</span>
+<span class="go">17</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+<section id="normalize">
+<h3>Normalize<a class="headerlink" href="#normalize" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="openket.core.metrics.Normalize">
+<span class="sig-name descname"><span class="pre">Normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.metrics.Normalize" title="Link to this definition">¶</a></dt>
+<dd><p>This function produces a vector in a Hilbert space with norm equal to unity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="classes.html#openket.core.diracobject.DiracObject" title="openket.core.diracobject.DiracObject"><em>DiracObject</em></a>) – Total expression of vector(s) or a quantum state.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The normalized corresponding state.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="classes.html#openket.core.diracobject.DiracObject" title="openket.core.diracobject.DiracObject">DiracObject</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="commutator">
+<h3>Commutator<a class="headerlink" href="#commutator" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="openket.core.metrics.Commutator">
+<span class="sig-name descname"><span class="pre">Commutator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.metrics.Commutator" title="Link to this definition">¶</a></dt>
+<dd><p>This function calculates the conmutator of two operators.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<a class="reference internal" href="classes.html#openket.core.diracobject.Operator" title="openket.core.diracobject.Operator"><em>Operator</em></a>) – Operator or matrix.</p></li>
+<li><p><strong>B</strong> (<a class="reference internal" href="classes.html#openket.core.diracobject.Operator" title="openket.core.diracobject.Operator"><em>Operator</em></a>) – Operator or matrix.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The conmutator of <cite>A</cite> and <cite>B</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="classes.html#openket.core.diracobject.Operator" title="openket.core.diracobject.Operator">Operator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="traceout">
+<h3>TraceOut<a class="headerlink" href="#traceout" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="openket.core.metrics.TraceOut">
+<span class="sig-name descname"><span class="pre">TraceOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.metrics.TraceOut" title="Link to this definition">¶</a></dt>
+<dd><p>This function computes the partial trace of a series of outer products or a bipartite density matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<a class="reference internal" href="classes.html#openket.core.diracobject.Operator" title="openket.core.diracobject.Operator"><em>Operator</em></a>) – Bipartite density matrix or total expression of outer products.</p></li>
+<li><p><strong>htag</strong> (<em>string</em>) – Tag of the Hilbert space you will be tracing out.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The partial trace of <cite>A</cite> acting only in <cite>htag</cite> space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="classes.html#openket.core.diracobject.Operator" title="openket.core.diracobject.Operator">Operator</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="example">
+<h4>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;A&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;A&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">psi</span>
+<span class="go">|0_A&gt;|1_B&gt; - |1_A&gt;|0_B&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">R</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">R</span>
+<span class="go">|0_A&gt;|1_B&gt;&lt;1_B|&lt;0_A| - |0_A&gt;|1_B&gt;&lt;0_B|&lt;1_A| - |1_A&gt;|0_B&gt;&lt;1_B|&lt;0_A| + |1_A&gt;|0_B&gt;&lt;0_B|&lt;1_A|</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RB</span> <span class="o">=</span> <span class="n">TraceOut</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RB</span>
+<span class="go">|0_B&gt;&lt;0_B| + |1_B&gt;&lt;1_B|</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RA</span> <span class="o">=</span> <span class="n">TraceOut</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">RA</span>
+<span class="go">|0_A&gt;&lt;0_A| + |1_A&gt;&lt;1_A|</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+<section id="trace">
+<h3>Trace<a class="headerlink" href="#trace" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="openket.core.metrics.Trace">
+<span class="sig-name descname"><span class="pre">Trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.metrics.Trace" title="Link to this definition">¶</a></dt>
+<dd><p>This function computes the total trace of a sum of exterior products or density matrix.
+It finds the total number of Hilbert spaces and their tags and then it uses TraceOut over
+all of them succesively, returning a complex number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<a class="reference internal" href="classes.html#openket.core.diracobject.Operator" title="openket.core.diracobject.Operator"><em>Operator</em></a>) – Bipartite density matrix or total expression of outer products.</p></li>
+<li><p><strong>basis</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The total trace of <cite>A</cite> acting in all Hilbert spaces.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>number</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="id2">
+<h4>Example<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<p>Continuing with the previus example:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Trace</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+</section>
+<section id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">¶</a></h2>
+<section id="qmatrix">
+<h3>Qmatrix<a class="headerlink" href="#qmatrix" title="Link to this heading">¶</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="openket.core.metrics.Qmatrix">
+<span class="sig-name descname"><span class="pre">Qmatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.metrics.Qmatrix" title="Link to this definition">¶</a></dt>
+<dd><p>This function returns the matrix representation of any operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<a class="reference internal" href="classes.html#openket.core.diracobject.DiracObject" title="openket.core.diracobject.DiracObject"><em>DiracObject</em></a>) – Sum of exterior products.</p></li>
+<li><p><strong>basis</strong> (<em>list</em><em>, </em><em>optional</em>) – List of Ket objects that conforms the basis in which the matrix will be represented.
+If no basis is specified, the function founds out how many different kets or bras
+the expression (sum of the exterior products) contains, to determine the basis and the size of the matrix.
+For the moment, these can only be eigenvectors of a single operator.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Raised if exterior products are expressed in differents Hilbert spaces.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The matrix representation of A in <cite>basis</cite> or a default basis.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Sympy Matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+  <li class="prev">
+    <a href="classes.html"
+       title="previous chapter">← Classes</a>
+  </li>
+</ul><div class="footer" role="contentinfo">
+      &#169; Copyright 2024, ultrxvioletx.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.9.1.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>

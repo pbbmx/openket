@@ -1,0 +1,6 @@
+﻿openket.core.diracobject.DiracObject.\_\_add\_\_
+================================================
+
+.. currentmodule:: openket.core.diracobject
+
+.. automethod:: DiracObject.__add__

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html  lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+      <title>Classes</title>
+    
+          <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="../_static/theme.css " type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script src="../_static/documentation_options.js?v=2709fde1"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="../_static/theme-vendors.js"></script> -->
+      <script src="../_static/theme.js" defer></script>
+    
+  <link rel="index" title="Index" href="../genindex.html" />
+  <link rel="search" title="Search" href="../search.html" />
+  <link rel="next" title="Functions" href="functions.html" />
+  <link rel="prev" title="API documentation" href="apidoc.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="../index.html" class="home-link">
+    
+      <span class="site-name">OpenKet</span>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">Quick search</span>
+    <div class="searchformwrapper">
+      <form class="search" action="../search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="Search" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+  
+    <div class="sidebar-group">
+      <p class="caption">
+        <span class="caption-text"><a href="../index.html#openket-documentation">openket documentation</a></span>
+      </p>
+      <ul class="">
+        
+          <li class="toctree-l1 ">
+            
+              <a href="../installation.html" class="reference internal ">Installation</a>
+            
+
+            
+          </li>
+
+        
+          <li class="toctree-l1 ">
+            
+              <a href="apidoc.html" class="reference internal ">API documentation</a>
+            
+
+            
+          </li>
+
+        
+      </ul>
+    </div>
+  
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="apidoc.html">API documentation</a> &raquo;</li>
+    
+    <li>Classes</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+  <li class="prev">
+    <a href="apidoc.html"
+       title="previous chapter">← API documentation</a>
+  </li>
+  <li class="next">
+    <a href="functions.html"
+       title="next chapter">Functions →</a>
+  </li>
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <section id="classes">
+<span id="id1"></span><h1>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h1>
+<section id="openket-classes">
+<h2>OpenKet classes<a class="headerlink" href="#openket-classes" title="Link to this heading">¶</a></h2>
+<section id="diracobject">
+<h3>DiracObject<a class="headerlink" href="#diracobject" title="Link to this heading">¶</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="openket.core.diracobject.DiracObject">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DiracObject</span></span><a class="headerlink" href="#openket.core.diracobject.DiracObject" title="Link to this definition">¶</a></dt>
+<dd><p>A class for representing quantum objects, such as quantum operators and states.</p>
+<p>The DiracObject class is the OpenKet representation of quantum operators and state vectors.
+This class also implements math operations +,-,* between DiracObject instances (and / by a complex number).</p>
+</dd></dl>
+
+</section>
+<section id="ket">
+<h3>Ket<a class="headerlink" href="#ket" title="Link to this heading">¶</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="openket.core.diracobject.Ket">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Ket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.diracobject.Ket" title="Link to this definition">¶</a></dt>
+<dd><p>A class for representing a state, called ket. <cite>Ket</cite> is a class inheritanced from <cite>DiracObject</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>int</em><em> or </em><em>Sympy variable</em>) – Vector tag. Must be either a number class or a Sympy variable.</p></li>
+<li><p><strong>A</strong> (<em>string</em><em>, </em><em>optional</em>) – Operator tag. The ket is then the eigenvector of the operator, and they comply with the eigenvalues equation.
+Also this param could be the Hilbert space tag where the ket lives.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="examples">
+<h4>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h4>
+<p>In this example <cite>x</cite> and <cite>v</cite> are two different objects. <cite>x</cite> is a Sympy variable and <cite>v</cite> is the object <em>Ket</em>.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ket_x</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ket_x</span>
+<span class="go">|x&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>In the following example, although <cite>u</cite> and <cite>w</cite> have the same vector tag, they are not treated as the same object. For this kind of tags,
+strings as well as Sympy variables may be used.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">eig</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">.</span><span class="n">op</span>
+<span class="go">&#39;B&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+<section id="bra">
+<h3>Bra<a class="headerlink" href="#bra" title="Link to this heading">¶</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="openket.core.diracobject.Bra">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Bra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.diracobject.Bra" title="Link to this definition">¶</a></dt>
+<dd><p>A class for representing the vectors corresponding to the dual space, called bras.
+<cite>Bra</cite> is a class inheritanced from <cite>DiracObject</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>int</em><em> or </em><em>Sympy variable</em>) – Vector dual tag. Must be either a number class or a Sympy variable.</p></li>
+<li><p><strong>A</strong> (<em>string</em><em>, </em><em>optional</em>) – Operator tag representing the eigenvalues equation for vector whose bra is the dual.
+Also this param could be the Hilbert space tag where the corresponding ket lives.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="example">
+<h4>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h4>
+<p>In this example <cite>y</cite> and <cite>z</cite> are two different objects. <cite>y</cite> is a Sympy variable and <cite>z</cite> is the object <em>Bra</em>.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">var</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bra_y</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bra_y</span>
+<span class="go">&lt;y|</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bra_y</span><span class="o">.</span><span class="n">eig</span>
+<span class="go">y</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bra_y</span><span class="o">.</span><span class="n">op</span>
+<span class="go">&#39;default&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+<section id="operator">
+<h3>Operator<a class="headerlink" href="#operator" title="Link to this heading">¶</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="openket.core.diracobject.Operator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.diracobject.Operator" title="Link to this definition">¶</a></dt>
+<dd><p>A class for representing an operator.
+<cite>Operator</cite> is a class inheritanced from <cite>DiracObject</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>A</strong> (<em>string</em>) – Operator tag.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="id2">
+<h4>Example<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<p>The symbol on the left of the equality does not need to be the same as the argument of Operator, this is just how you are calling it,
+where as the argument is how OpenKet tags it.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">Operator</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">);</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span>
+<span class="go">A</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name</span> <span class="o">=</span> <span class="n">Operator</span><span class="p">(</span><span class="s2">&quot;up&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name</span><span class="o">.</span><span class="n">op</span>
+<span class="go">&#39;up&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>It is convenient to have the same tags if no confusion is produced. However the option is always available to name objects the way we want.</p>
+</section>
+</section>
+<section id="creationoperator">
+<h3>CreationOperator<a class="headerlink" href="#creationoperator" title="Link to this heading">¶</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="openket.core.diracobject.CreationOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CreationOperator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">htag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.diracobject.CreationOperator" title="Link to this definition">¶</a></dt>
+<dd><p>A class for representing the Creation operator.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\hat{a}^{\dagger}|n\rangle &amp;= \sqrt{n+1}|n+1\rangle \\
+\langle n| \hat{a}^{\dagger} &amp;= \sqrt{n} \langle n-1| \\
+\end{aligned}\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>htag</strong> (<em>string</em><em>, </em><em>optional</em>) – Hilbert space tag.</p></li>
+<li><p><strong>maximum</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum value for n.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="id3">
+<h4>Example<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">var</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ket_n</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="n">bra_n</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aa</span> <span class="o">=</span> <span class="n">CreationOperator</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">aa</span><span class="o">*</span><span class="n">ket_n</span>
+<span class="go">(1 + n)**(1/2)|n+1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bra_n</span><span class="o">*</span><span class="n">aa</span>
+<span class="go">n**(1/2)&lt;n-1|</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+<section id="annihilationoperator">
+<h3>AnnihilationOperator<a class="headerlink" href="#annihilationoperator" title="Link to this heading">¶</a></h3>
+<dl class="py class">
+<dt class="sig sig-object py" id="openket.core.diracobject.AnnihilationOperator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AnnihilationOperator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">htag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.diracobject.AnnihilationOperator" title="Link to this definition">¶</a></dt>
+<dd><p>A class for representing the Annihilation operator.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\hat{a}|n\rangle &amp;= \sqrt{n}|n-1\rangle \\
+\langle n| \hat{a} &amp;= \sqrt{n+1} \langle n+1| \\
+\end{aligned}\end{split}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>htag</strong> (<em>string</em><em>, </em><em>optional</em>) – Hilbert space tag.</p></li>
+<li><p><strong>maximum</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum value for n.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="id4">
+<h4>Example<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h4>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">var</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ket_n</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="n">bra_n</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">AnnihilationOperator</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">*</span><span class="n">ket_n</span>
+<span class="go">n**(1/2)|n-1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bra_n</span><span class="o">*</span><span class="n">a</span>
+<span class="go">(1 + n)**(1/2)&lt;n+1|</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+</section>
+</section>
+</section>
+
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+  <li class="prev">
+    <a href="apidoc.html"
+       title="previous chapter">← API documentation</a>
+  </li>
+  <li class="next">
+    <a href="functions.html"
+       title="next chapter">Functions →</a>
+  </li>
+</ul><div class="footer" role="contentinfo">
+      &#169; Copyright 2024, ultrxvioletx.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.9.1.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>
