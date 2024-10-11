@@ -9,12 +9,12 @@
 import os
 import pathlib
 import sys
-sys.path.insert(0, os.path.abspath('/home/ultravioleta/Documents/GitHub/openket'))
+sys.path.insert(0, os.path.abspath('../'))
 
 project = 'OpenKet'
-copyright = '2024, ultrxvioletx'
-author = 'ultrxvioletx'
-release = '0.1'
+copyright = '2024, IIMAS'
+author = 'IIMAS UNAM'
+release = '0.1.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -35,8 +35,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 # html_theme = 'sphinx_rtd_theme'
-# html_theme = 'sphinx-book-theme'
-html_theme = 'press'
+html_theme = 'sphinx_book_theme'
+# html_theme = 'press'
 html_static_path = ['_static']
 
 

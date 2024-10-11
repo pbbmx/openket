@@ -54,13 +54,36 @@ class DiracObject(object):
     
 class Ket(DiracObject):
     """
-    A class for representing a state, called ket. `Ket` is a class inheritanced from `DiracObject`.
+    A class for representing a state, called ket. *Ket* is a class inheritanced from `DiracObject`.
 
     :param a: Vector tag. Must be either a number class or a Sympy variable.
     :type a: int or Sympy variable
     :param A: Operator tag. The ket is then the eigenvector of the operator, and they comply with the eigenvalues equation.
                 Also this param could be the Hilbert space tag where the ket lives.
     :type A: string, optional
+
+    Examples
+    ^^^^^^^^^
+    In this example *x* and *v* are two different objects. *x* is a Sympy variable and *v* is the object `Ket`.
+
+        .. code-block:: python
+
+            >>> x = var("x")
+            >>> ket_x = Ket(x)
+            >>> ket_x
+            |x>
+
+    In the following example, although `u` and `w` have the same vector tag, they are not treated as the same object. For this kind of tags,
+    strings as well as Sympy variables may be used.
+
+        .. code-block:: python
+
+            >>> a = Ket(1,"A")
+            >>> b = Ket(1,"B")
+            >>> a.eig
+            1
+            >>> b.op
+            'B'
     
     """
     def __init__(self, a, A = 'default'):
@@ -75,13 +98,29 @@ class Ket(DiracObject):
 class Bra(DiracObject):
     """
     A class for representing the vectors corresponding to the dual space, called bras.
-    `Bra` is a class inheritanced from `DiracObject`.
+    *Bra* is a class inheritanced from `DiracObject`.
 
     :param a: Vector dual tag. Must be either a number class or a Sympy variable.
     :type a: int or Sympy variable
     :param A: Operator tag representing the eigenvalues equation for vector whose bra is the dual.
                 Also this param could be the Hilbert space tag where the corresponding ket lives.
     :type A: string, optional
+
+
+    Example
+    ^^^^^^^^^
+    In this example `y` and `z` are two different objects. `y` is a Sympy variable and `z` is the object *Bra*.
+
+        .. code-block:: python
+            
+            >>> y = var("y")
+            >>> bra_y = Bra(y)
+            >>> bra_y
+            <y|
+            >>> bra_y.eig
+            y
+            >>> bra_y.op
+            'default'
 
     """
     def __init__(self, a, A = 'default'):
@@ -95,11 +134,26 @@ class Bra(DiracObject):
 
 class Operator(DiracObject):
     """
-    A class for representing an operator.
-    `Operator` is a class inheritanced from `DiracObject`.
+    A class for representing an operator. `Operator` is a class inheritanced from `DiracObject`.
 
     :param A: Operator tag.
     :type A: string
+
+    Example
+    ^^^^^^^^^
+    The symbol on the left of the equality does not need to be the same as the argument of Operator, this is just how you are calling it,
+    where as the argument is how OpenKet tags it.
+
+        .. code-block:: python
+
+            >>> A = Operator("A");
+            >>> A
+            A
+            >>> name = Operator("up")
+            >>> name.op
+            'up'
+
+    It is convenient to have the same tags if no confusion is produced. However the option is always available to name objects the way we want.
 
     """
     def __init__(self, A):
@@ -108,7 +162,7 @@ class Operator(DiracObject):
         return str(self.op)
 
 class AdjointOperator(DiracObject):
-    """Definition of the dual operator class."""
+    """Definition of the dual operator class. *AdjointOperator* is a class inheritanced from `DiracObject`."""
     def __init__(self, A):
         self.op = A
     def __repr__(self):
@@ -116,7 +170,7 @@ class AdjointOperator(DiracObject):
 
 class CreationOperator(DiracObject):
     """
-    A class for representing the Creation operator.
+    A class for representing the Creation operator. *CreationOperator* is a class inheritanced from `DiracObject`.
 
     .. math::
 
@@ -130,6 +184,19 @@ class CreationOperator(DiracObject):
     :param maximum: Maximum value for n.
     :type maximum: int, optional
 
+    Example
+    ^^^^^^^^^
+
+        .. code-block:: python
+
+            >>> n = var("n")
+            >>> ket_n = Ket(n); bra_n = Bra(n)
+            >>> aa = CreationOperator()
+            >>> aa*ket_n
+            (1 + n)**(1/2)|n+1>
+            >>> bra_n*aa
+            n**(1/2)<n-1|
+
     """
     def __init__(self, htag = 'default', maximum = 0):
         self.op = htag
@@ -142,7 +209,7 @@ class CreationOperator(DiracObject):
 
 class AnnihilationOperator(DiracObject):
     """
-    A class for representing the Annihilation operator.
+    A class for representing the Annihilation operator. *AnnihilationOperator* is a class inheritanced from `DiracObject`.
 
     .. math::
 
@@ -156,6 +223,19 @@ class AnnihilationOperator(DiracObject):
     :param maximum: Maximum value for n.
     :type maximum: int, optional
 
+    Example
+    ^^^^^^^^^
+
+        .. code-block:: python
+
+            >>> n = var("n")
+            >>> ket_n = Ket(n); bra_n = Bra(n)
+            >>> a = AnnihilationOperator()
+            >>> a*ket_n
+            n**(1/2)|n-1>
+            >>> bra_n*a
+            (1 + n)**(1/2)<n+1|
+
     """
     def __init__(self, htag = 'default', maximum = 0):
         self.op = htag
@@ -166,6 +246,8 @@ class AnnihilationOperator(DiracObject):
         else:
             return 'a(' + str(self.op) + ')'
 
+
+#hace falta revisar si son locales o para el usuario
 class DiracSum(DiracObject):
     """This class represents the sum of several elements, which
     can be kets, bras, operators, dual operators, numbers, sums

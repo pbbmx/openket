@@ -5,10 +5,37 @@ def Adj(A):
     """
     This function calculates the hermitian conjugate of a quantum object.
 
-    :param A: Openket expression, this could be a Bra, Ket, Operator or complex number.
-    :type A: DiracObject
-    :return: The hermitian conjugate of `A`.
-    :rtype: DiracObject
+    :param A: Openket expression, this could be a `Bra`, `Ket`, `Operator` or complex number.
+    :type A: `DiracObject`
+    :return: The hermitian conjugate of *A*.
+    :rtype: `DiracObject`
+
+    Examples
+    ^^^^^^^^^
+
+        .. code-block:: python
+
+            >>> Adj(1 + I)
+            1-I
+
+        .. code-block:: python
+
+            >>> Adj(Ket(0))
+            <0|
+            >>> Adj(Bra(1))
+            |1>
+
+    Of course, it's all possible to calculate the norm of any state.
+
+        .. code-block:: python
+
+            >>> w = I*Ket(0) - 4*Ket(1)
+            >>> w
+            I|0> - 4|1>
+            >>> norm = Adj(w)*w
+            >>> norm
+            17
+
     """
 
     if isinstance(A, do.Bra):
@@ -32,12 +59,12 @@ def Adj(A):
 def Commutator(A, B):
     """This function calculates the conmutator of two operators.
 
-    :param A: Operator or matrix.
-    :type A: Operator
-    :param B: Operator or matrix.
-    :type B: Operator
-    :return: The conmutator of `A` and `B`.
-    :rtype: Operator
+    :param A: `Operator` or matrix.
+    :type A: `Operator`
+    :param B: `Operator` or matrix.
+    :type B: `Operator`
+    :return: The conmutator of *A* and *B*.
+    :rtype: `Operator`
     """
     return A*B - B*A
 
@@ -45,11 +72,32 @@ def TraceOut(A, htag):
     """This function computes the partial trace of a series of outer products or a bipartite density matrix.
 
     :param A: Bipartite density matrix or total expression of outer products.
-    :type A: Operator
+    :type A: `Operator`
     :param htag: Tag of the Hilbert space you will be tracing out.
     :type htag: string
-    :return: The partial trace of `A` acting only in `htag` space.
-    :rtype: Operator
+    :return: The partial trace of *A* acting only in *htag* space.
+    :rtype: `Operator`
+
+    Example
+    ^^^^^^^^^
+
+        .. code-block:: python
+
+            >>> psi = Ket(0,"A")*Ket(1,"B") - Ket(1,"A")*Ket(0,"B")
+            >>> psi
+            |0_A>|1_B> - |1_A>|0_B>
+            >>> R = psi*Adj(psi)
+            >>> R
+            |0_A>|1_B><1_B|<0_A| - |0_A>|1_B><0_B|<1_A| - |1_A>|0_B><1_B|<0_A| + |1_A>|0_B><0_B|<1_A|
+            >>>
+            >>>
+            >>> RB = TraceOut(R,"A")
+            >>> RB
+            |0_B><0_B| + |1_B><1_B|
+            >>> RA = TraceOut(R,"B")
+            >>> RA
+            |0_A><0_A| + |1_A><1_A|
+
     """
     A = do._expandir(A)
     Lterms = A.terms
@@ -83,15 +131,25 @@ def TraceOut(A, htag):
 def Trace(A, basis = 'default'):
     """
     This function computes the total trace of a sum of exterior products or density matrix.
-    It finds the total number of Hilbert spaces and their tags and then it uses TraceOut over
+    It finds the total number of Hilbert spaces and their tags and then it uses `TraceOut` over
     all of them succesively, returning a complex number.
 
     :param A: Bipartite density matrix or total expression of outer products.
-    :type A: Operator
+    :type A: `Operator`
     :param basis: 
     :type basis:
-    :return: The total trace of `A` acting in all Hilbert spaces.
+    :return: The total trace of *A* acting in all Hilbert spaces.
     :rtype: number
+
+    Example
+    ^^^^^^^^^
+    Continuing with the previus example:
+
+        .. code-block:: python
+
+            >>> Trace(R)
+            2
+
     """
     if basis == 'default':
         A = do._expandir(A)
@@ -116,9 +174,9 @@ def Normalize(state):
     This function produces a vector in a Hilbert space with norm equal to unity.
 
     :param state: Total expression of vector(s) or a quantum state.
-    :type state: DiracObject
+    :type state: `DiracObject`
     :return: The normalized corresponding state.
-    :rtype: DiracObject
+    :rtype: `DiracObject`
     """
     norm = (Adj(state)*state)
     norm = float(norm)
@@ -130,14 +188,14 @@ def Qmatrix(A, basis = 'default'):
     This function returns the matrix representation of any operator.
 
     :param A: Sum of exterior products.
-    :type A: DiracObject
+    :type A: `DiracObject`
     :param basis: List of Ket objects that conforms the basis in which the matrix will be represented.
                     If no basis is specified, the function founds out how many different kets or bras
                     the expression (sum of the exterior products) contains, to determine the basis and the size of the matrix.
                     For the moment, these can only be eigenvectors of a single operator.
     :type basis: list, optional
     :raises Exception: Raised if exterior products are expressed in differents Hilbert spaces.
-    :return: The matrix representation of A in `basis` or a default basis.
+    :return: The matrix representation of *A* in *basis* or a default basis.
     :rtype: Sympy Matrix
     """
     A = do.DiracSum(A)
@@ -189,11 +247,11 @@ def Dictionary(A, basis):
     'word' a variable. Is is assumed that all variables al complex.
     The 'definitions' of each 'word' are the variables themselves."""
     """
-    This function creates a dictionary object with 'words' as strings of matrix elements of the operator `A`, in the base `basis`.
+    This function creates a dictionary object with 'words' as strings of matrix elements of the operator *A*, in the base *basis*.
 
     :param A: _description_
-    :type A: Operator
-    :param basis: List of Ket objects containing all the elements of the basis.
+    :type A: `Operator`
+    :param basis: List of `Ket` objects containing all the elements of the basis.
     :type basis: list
     :return: _description_
     :rtype: _type_
