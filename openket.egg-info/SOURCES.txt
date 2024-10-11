@@ -1,7 +1,13 @@
 LICENSE
 README.md
 setup.py
+openket/__init__.py
 openket.egg-info/PKG-INFO
 openket.egg-info/SOURCES.txt
 openket.egg-info/dependency_links.txt
 openket.egg-info/top_level.txt
+openket/core/__init__.py
+openket/core/diracobject.py
+openket/core/gates.py
+openket/core/metrics.py
+openket/core/operators.py
