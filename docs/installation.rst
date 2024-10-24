@@ -19,7 +19,7 @@ Then, in the root directory of the proyect execute:
    pip install .
 
 It is not recommended to install any packages directly into the system Python environment;
-consider using pip or conda virtual environments to keep your operating system space clean,
+consider using ``pip`` or ``conda`` virtual environments to keep your operating system space clean,
 and to have more control over Python and other package versions.
 
 Finally, yout must include in your .py file the module, for example:

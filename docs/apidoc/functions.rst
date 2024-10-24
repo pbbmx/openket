@@ -68,3 +68,37 @@ Qmatrix
 -------------------
 
 .. autofunction:: openket.core.metrics.Qmatrix
+
+
+
+=================================================
+Time evolution
+=================================================
+
+.. _func-dictionary:
+
+-------------------
+Dictionary
+-------------------
+
+.. autofunction:: openket.core.evolution.Dictionary
+
+
+
+.. _func-qch:
+
+-------------------
+Qch
+-------------------
+
+.. autofunction:: openket.core.evolution.Qch
+
+
+
+.. _func-qeq:
+
+-------------------
+Qeq
+-------------------
+
+.. autofunction:: openket.core.evolution.Qeq

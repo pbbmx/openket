@@ -1,14 +1,16 @@
 from sympy import Matrix, I, symbols
-import openket.core.diracobject as do
+from openket.core.diracobject import _expandir
+from openket.core.diracobject import *
+from openket.core.gates import *
 
 def Adj(A):
     """
     This function calculates the hermitian conjugate of a quantum object.
 
-    :param A: Openket expression, this could be a `Bra`, `Ket`, `Operator` or complex number.
-    :type A: `DiracObject`
-    :return: The hermitian conjugate of *A*.
-    :rtype: `DiracObject`
+    :param A: Openket expression, this could be a :obj:`Bra`, :obj:`Ket`, :obj:`Operator` or complex number.
+    :type A: :obj:`DiracObject`
+    :return: The hermitian conjugate of ``A``.
+    :rtype: :obj:`DiracObject`
 
     Examples
     ^^^^^^^^^
@@ -38,33 +40,33 @@ def Adj(A):
 
     """
 
-    if isinstance(A, do.Bra):
-        return do.Ket(A.eig, A.op)
-    elif isinstance(A, do.Ket):
-        return do.Bra(A.eig, A.op)
-    elif isinstance(A, do.Operator):
-        return do.AdjointOperator(A.op)
-    elif isinstance(A, do.AdjointOperator):
-        return do.op(A.op)
-    elif isinstance(A, do.DiracSum):
-        return do.DiracSum(*map(Adj, A.terms))
-    elif isinstance(A, do.DiracMult):
+    if isinstance(A, Bra):
+        return Ket(A.eig, A.op)
+    elif isinstance(A, Ket):
+        return Bra(A.eig, A.op)
+    elif isinstance(A, Operator):
+        return AdjointOperator(A.op)
+    elif isinstance(A, AdjointOperator):
+        return op(A.op)
+    elif isinstance(A, DiracSum):
+        return DiracSum(*map(Adj, A.terms))
+    elif isinstance(A, DiracMult):
         l = A.factors
         L = l[:]
         L.reverse()
-        return do.DiracMult(A.coef.conjugate(), *map(Adj, L))
+        return DiracMult(A.coef.conjugate(), *map(Adj, L))
     else:
         return A.conjugate()
 
 def Commutator(A, B):
     """This function calculates the conmutator of two operators.
 
-    :param A: `Operator` or matrix.
-    :type A: `Operator`
-    :param B: `Operator` or matrix.
-    :type B: `Operator`
-    :return: The conmutator of *A* and *B*.
-    :rtype: `Operator`
+    :param A: The operator or matrix.
+    :type A: :obj:`Operator`
+    :param B: The operator or matrix.
+    :type B: :obj:`Operator`
+    :return: The conmutator of ``A`` and ``B``.
+    :rtype: :obj:`Operator`
     """
     return A*B - B*A
 
@@ -72,11 +74,11 @@ def TraceOut(A, htag):
     """This function computes the partial trace of a series of outer products or a bipartite density matrix.
 
     :param A: Bipartite density matrix or total expression of outer products.
-    :type A: `Operator`
+    :type A: Linear combination of :obj:`Ket`:obj:`Bra` objects
     :param htag: Tag of the Hilbert space you will be tracing out.
     :type htag: string
-    :return: The partial trace of *A* acting only in *htag* space.
-    :rtype: `Operator`
+    :return: The partial trace of ``A`` acting only in ``htag`` space.
+    :rtype: Linear combination of :obj:`Ket`:obj:`Bra` objects
 
     Example
     ^^^^^^^^^
@@ -99,7 +101,7 @@ def TraceOut(A, htag):
             |0_A><0_A| + |1_A><1_A|
 
     """
-    A = do._expandir(A)
+    A = _expandir(A)
     Lterms = A.terms
     htags = []
     elements = []
@@ -123,7 +125,7 @@ def TraceOut(A, htag):
     for i in d.keys():
         if i == htag:
             for j in d[i]:
-                term = term + do.Bra(j,i) * A * do.Ket(j,i)
+                term = term + Bra(j,i) * A * Ket(j,i)
             A = term
             term = 0
     return A
@@ -131,14 +133,14 @@ def TraceOut(A, htag):
 def Trace(A, basis = 'default'):
     """
     This function computes the total trace of a sum of exterior products or density matrix.
-    It finds the total number of Hilbert spaces and their tags and then it uses `TraceOut` over
+    It finds the total number of Hilbert spaces and their tags and then it uses :obj:`TraceOut` over
     all of them succesively, returning a complex number.
 
     :param A: Bipartite density matrix or total expression of outer products.
-    :type A: `Operator`
+    :type A: Linear combination of :obj:`Ket`:obj:`Bra` objects
     :param basis: 
     :type basis:
-    :return: The total trace of *A* acting in all Hilbert spaces.
+    :return: The total trace of ``A`` acting in all Hilbert spaces.
     :rtype: number
 
     Example
@@ -152,7 +154,7 @@ def Trace(A, basis = 'default'):
 
     """
     if basis == 'default':
-        A = do._expandir(A)
+        A = _expandir(A)
         Lterms = A.terms
         htags = []
         for i in Lterms:
@@ -174,9 +176,9 @@ def Normalize(state):
     This function produces a vector in a Hilbert space with norm equal to unity.
 
     :param state: Total expression of vector(s) or a quantum state.
-    :type state: `DiracObject`
+    :type state: :obj:`DiracObject`
     :return: The normalized corresponding state.
-    :rtype: `DiracObject`
+    :rtype: :obj:`DiracObject`
     """
     norm = (Adj(state)*state)
     norm = float(norm)
@@ -187,27 +189,27 @@ def Qmatrix(A, basis = 'default'):
     """
     This function returns the matrix representation of any operator.
 
-    :param A: Sum of exterior products.
-    :type A: `DiracObject`
-    :param basis: List of Ket objects that conforms the basis in which the matrix will be represented.
+    :param A: Sum of outer products.
+    :type A: Linear combination of :obj:`Ket`:obj:`Bra` objects
+    :param basis: List of :obj:`Ket` objects that conforms the basis in which the matrix will be represented.
                     If no basis is specified, the function founds out how many different kets or bras
-                    the expression (sum of the exterior products) contains, to determine the basis and the size of the matrix.
+                    the expression (sum of the outer products) contains, to determine the basis and the size of the matrix.
                     For the moment, these can only be eigenvectors of a single operator.
     :type basis: list, optional
     :raises Exception: Raised if exterior products are expressed in differents Hilbert spaces.
-    :return: The matrix representation of *A* in *basis* or a default basis.
+    :return: The matrix representation of ``A`` in ``basis`` or a default basis.
     :rtype: Sympy Matrix
     """
-    A = do.DiracSum(A)
+    A = DiracSum(A)
     if basis == 'default':
         eigs = []; ops = []
         for term in A.terms:
-            if isinstance(term, do.DiracMult):
+            if isinstance(term, DiracMult):
                 pass
             else:
-                term = do.DiracMult(1, term)
+                term = DiracMult(1, term)
             for fact in term.factors:
-                if isinstance(fact, do.Ket) or isinstance(fact, do.Bra):
+                if isinstance(fact, Ket) or isinstance(fact, Bra):
                     eigs.append(fact.eig)
                     ops.append(fact.op)
         eigs = list(set(eigs)); eigs.sort()
@@ -224,7 +226,7 @@ def Qmatrix(A, basis = 'default'):
         for i in eigs:
             row = []
             for j in eigs:
-                row.append(do.Bra(i,oper)*A*do.Ket(j,oper))
+                row.append(Bra(i,oper)*A*Ket(j,oper))
             M.append(row)
         M = Matrix(M)
     else:
@@ -236,41 +238,3 @@ def Qmatrix(A, basis = 'default'):
             M.append(row)
         M = Matrix(M)
     return M
-
-def Dictionary(A, basis):
-    """This function creates a dictionary object with 'words' as strings of
-    matrix elements of the operator R, in the base x. x is given as a list
-    containing all the elements of the basis, and R is necessarily defined
-    as an Operator. The function creates variables representing a complex
-    number, e.g. w + I*y, where w and y are defined as real variables. If the
-    base used has n elements, n*n variables are created, asigning each
-    'word' a variable. Is is assumed that all variables al complex.
-    The 'definitions' of each 'word' are the variables themselves."""
-    """
-    This function creates a dictionary object with 'words' as strings of matrix elements of the operator *A*, in the base *basis*.
-
-    :param A: _description_
-    :type A: `Operator`
-    :param basis: List of `Ket` objects containing all the elements of the basis.
-    :type basis: list
-    :return: _description_
-    :rtype: _type_
-    """
-    n = len(basis)
-    u = []
-    w = []
-    t = []
-    for i in range( n*n ):
-        u.append('Re%d' %i)
-        u[i] = symbols('Re%d' %i, real=True, each_char=False)
-        w.append('Im%d' %i)
-        w[i] = symbols('Im%d' %i, real=True, each_char=False)
-    for i in range(len(u)):
-        t.append(u[i] + I*w[i])
-    D = {}
-    k = 0
-    for i in range(n):
-        for j in range(n):
-            D[str(Adj(basis[i])*A*basis[j])] = t[k]
-            k = k + 1
-    return D
