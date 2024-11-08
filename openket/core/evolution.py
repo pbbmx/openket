@@ -3,7 +3,7 @@ from openket.core.metrics import *
 from sympy import Symbol, symbols, expand
 from sympy.core.cache import clear_cache
 from pylab import conjugate
-import re
+import re as regex
 
 
 def Dictionary(A, basis):
@@ -98,9 +98,9 @@ def Qeq(R, Rdot, basis, filename = "func", dictname = "dic", GSL = False):
     This function creates a file called ``filename``, which defines a function
     in the sintaxis needed to feed Scipy's ODE solver `odeint` or GSL ODE solver.
 
-    :param R: Operator involved. It should be in terms of the basis ``basis``.
+    :param R: Operator involved. The function turns it in terms of the basis ``basis``.
     :type R: :obj:`Operator`
-    :param Rdot: Usually the commutator of R with H, where H is the Hamiltonian of the system.
+    :param Rdot: Operator that expresses change over the time, usually the commutator [H,R] where H is the Hamiltonian of the system.
     :type Rdot: :obj:`Operator`
     :param basis: List of :obj:`Ket` objects containing all the elements of the basis.
     :type basis: list of :obj:`Ket`
@@ -113,192 +113,210 @@ def Qeq(R, Rdot, basis, filename = "func", dictname = "dic", GSL = False):
     :type GSL: bool
     :return: Return a file with a function written in the sintaxis defined. Besides, if :code:`GLS = True` also returns a
             file with the dictionary of the base and the variables.
-            It first creates a dictionary with the function :obj:`Dictionary`, using the list ``basis``,
-            and the operator ``R``, and then it finds the different expressions of time evolution 
+            It first creates a dictionary with the operator ``R`` elements expressed in the basis ``basis``
+            using the function :obj:`Dictionary`, and then it finds the different expressions of time evolution 
             for every matrix element substituting them for variables using :obj:`Qch`.
             Finally it writes the function :math:`f` into a file, where the ODE has the form :math:`\\frac{dy}{dt} = f(y,t)`;
-            :math:`y` should be understood as a vector, which is defined entry-like as a list, for example :math:`y[0]=x, y[1]=w`, etc.,
-            and :math:`t` is the time variable. :math:`f` returns also a list, containig the expressions of the derivatives of each entry
+            :math:`y` should be understood as a vector, which is defined entry-like as a list,and :math:`t` is the time variable.
+            :math:`f` returns also a list, containig the expressions of the derivatives of each entry
             of :math:`y` as entries of another list. 
             Scipy's ODE solver `odeint` understands this as a collection of coupled ODE to be solved, specifying
             an initial condition and the time step.
     :rtype: file
+
+    Example
+    ^^^^^^^^^
+
+    We will considerate the Two Level Semiclassical Atoms problem, when an atom interacts with an electromagnetic field.
+    We can describe the atom using a 2 element base, let this basis be {:math:`|0 \\rangle, |1 \\rangle`}.
+    Furthermore let the energy of the levels be :math:`\\hbar \\omega_0` and :math:`\\hbar \\omega_1` respectively.
+    Now, the total Hamiltonian may be divided into two parts: the Hamiltonian of the unperturbed atom :math:`\\hat{H_0}`,
+    and the interation part :math:`\\hat{V}`. These can be found to have the following form
+    
+        .. math::
+
+            \\hat{H_0} = \\hbar \\omega_0 |0 \\rangle \\langle 0| + \\hbar \\omega_1 |1 \\rangle \\langle 1| \\\\
+            \\hat{V} = g E(t) |0 \\rangle \\langle 1| + g* E(t) |1 \\rangle \\langle 0|
+    
+    Where we have put :math:`g = e \\langle 0| \\vec{r} |1 \\rangle \\cdot \\vec{\\epsilon}` and 
+    :math:`\\vec{E}(t) = |\\vec{E}(t)|\\vec{\\epsilon} = E(t) \\vec{\\epsilon}` with :math:`|\\vec{\\epsilon}| = 1`.
+    We assume the field has the form
+
+        .. math::
+
+            E(t) = A cos(\\nu t)
+
+    It is convenient to change to the interaction picture, and following the rotating wave approximation (RWA)
+    we end up with the Hamiltonian
+
+        .. math::
+
+            \\hat{H} = \\hbar (\\Omega |0 \\rangle \\langle 1| + \\Omega * |1 \\rangle \\langle 0|)
+
+    Where :math:`\\Omega = \\frac{gA}{2 \\hbar}` and we assume :math:`\\Omega = 1` for simplicity.
+    Following is the script which numerically solves the time evolution of the system described.
+
+        .. code-block:: python
+        
+            >>> import matplotlib.pyplot as plt
+            >>> from numpy import linspace
+            >>> from scipy.integrate import odeint
+
+            >>> basis = [Ket(0), Ket(1)]
+            >>> rho = Operator("R")
+            >>> rho_dot = -I*Commutator(H, rho)
+            >>> H = Ket(0)*Bra(1) + Ket(1)*Bra(0)
+            >>> Qeq(rho, rho_dot, basis, "func", "dic")
+
+            # The function created a file called `func` with the function we have put in `odeint`
+            >>> with open("func") as file:
+                    exec(file.read())
+            
+            >>> initial_conditions = [1,0, 0,0, 0,0, 0,0] #[1+i0, 0+i0, 0+i0, 0+i0]
+            >>> t = linspace(0,10,1000)
+            >>> solution = odeint(f, initial_conditions, t)
+            >>> plt.plot(t, solution[:,3])
+            >>> plt.show()
+
+    Note that the initial condition is given as a list, where the position in the list indicates the bracket term that one wishes
+    to give as the initial condition (the dic tells you which is which). As we are working with complex numbers, we represent one number
+    with two positions in the list.
+    Finally, the command :code:`solution[:,3]` partitions the total solution and only keeps the third entry 
+    (:code:`y[3]` corresponding to :math:`\\langle 1| \\rho |1 \\rangle`) in all the lists within `solution`.
+    The graph we obtain is the following.
+
+    .. figure:: qeq-example.png
+        :scale: 85 %
+
+        Time evolution for :math:`\\langle 1| \\rho |1 \\rangle` with the initial condition :math:`\\rho_{t=0} = |0 \\rangle \\langle 0|`
+    
     """
     
-    #GSL ODE solver
+    #GSL ODE solver (C language)
     if GSL:  
         #se crea el diccionario para la base b y el operador R
         D = Dictionary(R, basis)
-        #se empieza a escribir la funcion para lenguaje C
         f = open(filename, 'w')
         f.write('#include <stdio.h>\n') 
         f.write('#include <complex.h>\n') 
         f.write('#include <gsl/gsl_errno.h>\n')
         f.write('#include <gsl/gsl_matrix.h>\n')
         f.write('#include <gsl/gsl_odeiv2.h>\n\n')
-        # f.write('#include "hdf5.h"\n')
-        # f.write('#define FILE "dset.h5"\n\n')
-
         f.write('int func (double t, double y[], double f[], void *params) {\n')
 
-        #se crea la lista de valores reales e imaginarios W = [Re1,Im1,...,...,Ren*n,Imn*n]
-
+        # crea la lista de valores reales e imaginarios W = [Re1,Im1,...,...,Ren*n,Imn*n]
         W = []
-        a = []
-        d = []
         n = len(basis)
-
         for i in range( n*n ):
-            a.append('Re%d' %i)
-            a[i] = symbols('Re%d' %i, real=True, each_char=False)
-            d.append('Im%d' %i)
-            d[i] = symbols('Im%d' %i, real=True, each_char=False)
-        k = 0
-        for i in range(n):
-            for j in range(n):
-                W.append(a[k])
-                W.append(d[k])
-                k = k + 1
+            W.append(symbols('Re%d' %k, real=True, each_char=False))
+            W.append(symbols('Im%d' %k, real=True, each_char=False))
 
-        #termina de crearse W = [Re1,Im1,...,...,Ren*n,Imn*n]
-
+        # crea una lista con los strings L = [y[0],y[1],...,y[2*n*n]]
         L = ['y[' + '%d' %i + ']' for i in range(2*n*n)]
 
-        # Crea L = [y[1],...,y[2*n*n]]
-
-        # Crea el diccionario para hacer la substitucion de forma rapida
+        # crea el diccionario lista = {'Re1': y[0], ... ,'Imn*n': y[2n*n]}
         lista={}
-        for mi in range(2*n*n):
-            lista[W[mi]]=Symbol(L[mi])
+        for mi in range(2*n*n): lista[W[mi]]=Symbol(L[mi])
 
-        # Termina de crear un diccionario, lista = {'Re1': y[0], ... ,'Imn*n': y[2n*n]}  
-
-        for numero1,i in enumerate(basis): #numero es el numero del elemento, i es el elemento i-esimo en b
-            print (numero1,"/",len(basis))
-            clear_cache()   #Limpia el cache para que no ocupe toda la memoria
-            for numero2,j in enumerate(basis):
-                k =2*(numero1*(len(basis)) + numero2)
-                z = Adj(i)*Rdot*j
+        # escribe el sistema de ecuaciones para encontrar los valores a,b de los coeficientes a+ib
+        for i,ele in enumerate(basis):
+            bra = Adj(ele)
+            print (i,"/",len(basis))
+            clear_cache()
+            for j,ket in enumerate(basis):
+                k = 2*(i*n + j)
+                z = bra*Rdot*ket
                 zz = Qch(z, D)
-                zz = expand((zz+conjugate(zz))/2.0,complex=True) #Parte real
-                for var_subs in zz.atoms(Symbol):
+                re = expand((zz+conjugate(zz))/2.0,complex=True)
+                im = expand((zz-conjugate(zz))/(2.0*I),complex=True)
+                for var_subs in re.atoms(Symbol):
                     if var_subs in lista:
-                        zz = zz.subs(var_subs,lista[var_subs])
-                f.write('  ' + 'f[%d] = ' %k + str(zz) + ';\n')         
-                zz = Qch(z, D)
-                zz = expand((zz-conjugate(zz))/(2.0*I),complex=True) #Parte imaginaria
-                for var_subs in zz.atoms(Symbol):
-                    if lista.has_key(var_subs):
-                        zz = zz.subs(var_subs,lista[var_subs])
+                        re = re.subs(var_subs,lista[var_subs])
+                f.write('  ' + 'f[%d] = ' %k + str(re) + ';\n')
+                for var_subs in im.atoms(Symbol):
+                    if "var_subs" in lista:
+                        im = im.subs(var_subs,lista[var_subs])
                 k = k + 1
-                f.write('  ' + 'f[%d] = ' %k + str(zz) + ';\n')     
-                
-
-        f.write('    ' + 'return GSL_SUCCESS;\n')  
+                f.write('  ' + 'f[%d] = ' %k + str(im) + ';\n')
+        f.write('    ' + 'return GSL_SUCCESS;\n')
         f.write('}\n\n')
         dim = len(L)
-        f.write('int dim = ' + str(dim) + ';\n') 
-        f.close()  
+        f.write('int dim = ' + str(dim) + ';\n')
+        f.close()
 
-        # Se termina de escribir la funcion  
-
-
-        # el diccionario que relaciona '<i|R|j>' con las y[i]
-        # realmente con las "var('y[i]')"
-
+        # crea el diccionario que relaciona '<i|R|j>' con las y[i]
         f = open(dictname, 'w')
         f.write(dictname + '=' + '{')
-        for count1 in basis:
-            for count2 in basis:
-                temp = Adj(count1)*R*count2
+        for bra in basis:
+            bra = Adj(bra)
+            for ket in basis:
+                temp = bra*R*ket
                 temp = Qch(temp, D)
                 for var_subs in temp.atoms(Symbol):
-                    etiqueta=re.search("\[(.*)\]",str(lista[var_subs]))
+                    etiqueta=regex.search("\[(.*)\]",str(lista[var_subs]))
                     temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
-                f.write("'" + str(Adj(count1)*R*count2) + "'" + ':' + \
+                f.write("'" + str(bra*R*ket) + "'" + ':' + \
                 str(temp) + ',\n')
         f.write( '}')
-
         f.close()
-    #Scipy's ODE solver
+
+    #Scipy's ODE solver (python language)
     else:
-    
-        D = Dictionary(basis, R)
-        #print D
+        D = Dictionary(R, basis)
         f = open(filename, 'w')
         f.write('from sympy import var, I\n')
         f.write('def f(y, t):\n')
         
-        # crea la lista con las variables Re, Im
-        M, u, w = [], [], []
+        # crea la lista de valores reales e imaginarios W = [Re1,Im1,...,...,Ren*n,Imn*n]
+        W = []
         n = len(basis)
-        for i in range( n*n ):
-            u.append('Re%d' %i)
-            u[i] = symbols('Re%d' %i, real=True, each_char=False)
-            w.append('Im%d' %i)
-            w[i] = symbols('Im%d' %i, real=True, each_char=False)
-        k = 0
-        for i in range(n):
-            for j in range(n):
-                M.append(u[k])
-                M.append(w[k])
-                k = k + 1
-        # termina de crearla
+        for k in range(n*n):
+            W.append(symbols('Re%d' %k, real=True, each_char=False))
+            W.append(symbols('Im%d' %k, real=True, each_char=False))
 
-        # crea la lista con los strings y[0], y[1]
+        # crea una lista con los strings L = [y[0],y[1],...,y[2*n*n]]
         L = ['y[' + '%d' %i + ']' for i in range(2*n*n)]
-        # termina de crearla
 
-        # Crea el diccionario para hacer la substitucion de forma rapida
+        # crea el diccionario lista = {'Re1': y[0], ... ,'Imn*n': y[2n*n]}
         lista={}
-        for mi in range(2*n*n):
-            lista[M[mi]]=Symbol(L[mi])
-
+        for mi in range(2*n*n): lista[W[mi]]=Symbol(L[mi])
+        
+        # escribe el sistema de ecuaciones para encontrar los valores a,b de los coeficientes a+ib
         f.write('    ' + 'return [')    
-        for numero,i in enumerate(basis):
-            print (numero,"/",len(basis))
-            clear_cache()   #Limpia el cache para que no ocupe toda la memoria
-            for j in basis:
-                z = Adj(i)*Rdot*j
+        for i,ele in enumerate(basis):
+            bra = Adj(ele)
+            print (i,"/",len(basis))
+            clear_cache()
+            for j,ket in enumerate(basis):
+                z = bra*Rdot*ket
                 zz = Qch(z, D)
-                zz = expand((zz+conjugate(zz))/2.0,complex=True)
-                for var_subs in zz.atoms(Symbol):
+                re = expand((zz+conjugate(zz))/2.0,complex=True)
+                im = expand((zz-conjugate(zz))/(2.0*I),complex=True)
+                for var_subs in re.atoms(Symbol):
                     if var_subs in lista:
-                        zz = zz.subs(var_subs,lista[var_subs])
-                f.write( str(zz)+',\n')         
-                zz = Qch(z, D)
-                zz = expand((zz-conjugate(zz))/(2.0*I),complex=True)
-                for var_subs in zz.atoms(Symbol):
+                        re = re.subs(var_subs,lista[var_subs])
+                f.write(str(re)+',\n')
+                for var_subs in im.atoms(Symbol):
                     if var_subs in lista:
-                        zz = zz.subs(var_subs,lista[var_subs])
-                f.write(str(zz))     
-                if basis.index(i)*basis.index(j)==(len(basis)-1)**2:
+                        im = im.subs(var_subs,lista[var_subs])
+                f.write(str(im))
+                if basis.index(ele)*basis.index(ket)==(len(basis)-1)**2:
                     f.write(']\n')
                 else:
                     f.write(',\n')
-        # el diccionario que relaciona '<i|R|j>' con las y[i]
-        # realmente con las "var('y[i]')"
+        f.close()
 
-    ####    EMPIEZA VIEJO
-        #for conta1 in D.keys():
-        #    for conta2 in range(n**2):
-        #        D[conta1] = D[conta1].subs(M[conta2], Symbol(L[conta2])) #cambie a LL
-        #for conta3 in D.keys():
-        #    D[conta3] = str(D[conta3])
-        # termina de crearlo
-        #print D
-    ####    TERMINA VIEJO    
-
-    #    LL = ["var('y" + '%d' %i + "',real=True)" for i in range(n**2)]
-        f.write(dictname + '=' + '{')
-        for count1 in basis:
-            for count2 in basis:
-                temp = Adj(count1)*R*count2
+        # crea el diccionario que relaciona '<i|R|j>' con las y[i]
+        f = open(dictname, 'w')
+        for bra in basis:
+            bra = Adj(bra)
+            for ket in basis:
+                temp = bra*R*ket
                 temp = Qch(temp, D)
                 for var_subs in temp.atoms(Symbol):
-                    etiqueta=re.search("\[(.*)\]",str(lista[var_subs]))
+                    etiqueta = regex.search("\[(.*)\]",str(lista[var_subs]))
                     temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
-                f.write("'" + str(Adj(count1)*R*count2) + "'" + ':' + \
+                f.write("'" + str(bra*R*ket) + "'" + ':' + \
                 str(temp) + ',')
         f.write( '}')
         f.close()

@@ -655,8 +655,8 @@ in the sintaxis needed to feed Scipy’s ODE solver <cite>odeint</cite> or GSL O
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code>) – Operator involved. It should be in terms of the basis <code class="docutils literal notranslate"><span class="pre">basis</span></code>.</p></li>
-<li><p><strong>Rdot</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code>) – Usually the commutator of R with H, where H is the Hamiltonian of the system.</p></li>
+<li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code>) – Operator involved. The function turns it in terms of the basis <code class="docutils literal notranslate"><span class="pre">basis</span></code>.</p></li>
+<li><p><strong>Rdot</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code>) – Operator that expresses change over the time, usually the commutator [H,R] where H is the Hamiltonian of the system.</p></li>
 <li><p><strong>basis</strong> (list of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code>) – List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code> objects containing all the elements of the basis.</p></li>
 <li><p><strong>filename</strong> (<em>string</em>) – The name of the out file with the function.</p></li>
 <li><p><strong>dictname</strong> (<em>string</em>) – The name of the dictionay file.</p></li>
@@ -667,12 +667,12 @@ if <code class="code docutils literal notranslate"><span class="pre">False</span
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Return a file with a function written in the sintaxis defined. Besides, if <code class="code docutils literal notranslate"><span class="pre">GLS</span> <span class="pre">=</span> <span class="pre">True</span></code> also returns a
 file with the dictionary of the base and the variables.
-It first creates a dictionary with the function <a class="reference internal" href="#openket.core.evolution.Dictionary" title="openket.core.evolution.Dictionary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dictionary</span></code></a>, using the list <code class="docutils literal notranslate"><span class="pre">basis</span></code>,
-and the operator <code class="docutils literal notranslate"><span class="pre">R</span></code>, and then it finds the different expressions of time evolution 
+It first creates a dictionary with the operator <code class="docutils literal notranslate"><span class="pre">R</span></code> elements expressed in the basis <code class="docutils literal notranslate"><span class="pre">basis</span></code>
+using the function <a class="reference internal" href="#openket.core.evolution.Dictionary" title="openket.core.evolution.Dictionary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dictionary</span></code></a>, and then it finds the different expressions of time evolution 
 for every matrix element substituting them for variables using <a class="reference internal" href="#openket.core.evolution.Qch" title="openket.core.evolution.Qch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Qch</span></code></a>.
 Finally it writes the function <span class="math notranslate nohighlight">\(f\)</span> into a file, where the ODE has the form <span class="math notranslate nohighlight">\(\frac{dy}{dt} = f(y,t)\)</span>;
-<span class="math notranslate nohighlight">\(y\)</span> should be understood as a vector, which is defined entry-like as a list, for example <span class="math notranslate nohighlight">\(y[0]=x, y[1]=w\)</span>, etc.,
-and <span class="math notranslate nohighlight">\(t\)</span> is the time variable. <span class="math notranslate nohighlight">\(f\)</span> returns also a list, containig the expressions of the derivatives of each entry
+<span class="math notranslate nohighlight">\(y\)</span> should be understood as a vector, which is defined entry-like as a list,and <span class="math notranslate nohighlight">\(t\)</span> is the time variable.
+<span class="math notranslate nohighlight">\(f\)</span> returns also a list, containig the expressions of the derivatives of each entry
 of <span class="math notranslate nohighlight">\(y\)</span> as entries of another list. 
 Scipy’s ODE solver <cite>odeint</cite> understands this as a collection of coupled ODE to be solved, specifying
 an initial condition and the time step.</p>
@@ -681,6 +681,70 @@ an initial condition and the time step.</p>
 <dd class="field-odd"><p>file</p>
 </dd>
 </dl>
+<section id="id5">
+<h4>Example<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
+<p>We will considerate the Two Level Semiclassical Atoms problem, when an atom interacts with an electromagnetic field.
+We can describe the atom using a 2 element base, let this basis be {<span class="math notranslate nohighlight">\(|0 \rangle, |1 \rangle\)</span>}.
+Furthermore let the energy of the levels be <span class="math notranslate nohighlight">\(\hbar \omega_0\)</span> and <span class="math notranslate nohighlight">\(\hbar \omega_1\)</span> respectively.
+Now, the total Hamiltonian may be divided into two parts: the Hamiltonian of the unperturbed atom <span class="math notranslate nohighlight">\(\hat{H_0}\)</span>,
+and the interation part <span class="math notranslate nohighlight">\(\hat{V}\)</span>. These can be found to have the following form</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\begin{split}\hat{H_0} = \hbar \omega_0 |0 \rangle \langle 0| + \hbar \omega_1 |1 \rangle \langle 1| \\
+\hat{V} = g E(t) |0 \rangle \langle 1| + g* E(t) |1 \rangle \langle 0|\end{split}\]</div>
+</div></blockquote>
+<p>Where we have put <span class="math notranslate nohighlight">\(g = e \langle 0| \vec{r} |1 \rangle \cdot \vec{\epsilon}\)</span> and 
+<span class="math notranslate nohighlight">\(\vec{E}(t) = |\vec{E}(t)|\vec{\epsilon} = E(t) \vec{\epsilon}\)</span> with <span class="math notranslate nohighlight">\(|\vec{\epsilon}| = 1\)</span>.
+We assume the field has the form</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[E(t) = A cos(\nu t)\]</div>
+</div></blockquote>
+<p>It is convenient to change to the interaction picture, and following the rotating wave approximation (RWA)
+we end up with the Hamiltonian</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\hat{H} = \hbar (\Omega |0 \rangle \langle 1| + \Omega * |1 \rangle \langle 0|)\]</div>
+</div></blockquote>
+<p>Where <span class="math notranslate nohighlight">\(\Omega = \frac{gA}{2 \hbar}\)</span> and we assume <span class="math notranslate nohighlight">\(\Omega = 1\)</span> for simplicity.
+Following is the script which numerically solves the time evolution of the system described.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">odeint</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rho</span> <span class="o">=</span> <span class="n">Operator</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rho_dot</span> <span class="o">=</span> <span class="o">-</span><span class="n">I</span><span class="o">*</span><span class="n">Commutator</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">H</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="n">Bra</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Bra</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Qeq</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">rho_dot</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="s2">&quot;func&quot;</span><span class="p">,</span> <span class="s2">&quot;dic&quot;</span><span class="p">)</span>
+
+<span class="go"># The function created a file called `func` with the function we have put in `odeint`</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;func&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+<span class="go">        exec(file.read())</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">initial_conditions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#[1+i0, 0+i0, 0+i0, 0+i0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">solution</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">initial_conditions</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">solution</span><span class="p">[:,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Note that the initial condition is given as a list, where the position in the list indicates the bracket term that one wishes
+to give as the initial condition (the dic tells you which is which). As we are working with complex numbers, we represent one number
+with two positions in the list.
+Finally, the command <code class="code docutils literal notranslate"><span class="pre">solution[:,3]</span></code> partitions the total solution and only keeps the third entry 
+(<code class="code docutils literal notranslate"><span class="pre">y[3]</span></code> corresponding to <span class="math notranslate nohighlight">\(\langle 1| \rho |1 \rangle\)</span>) in all the lists within <cite>solution</cite>.
+The graph we obtain is the following.</p>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="../_images/qeq-example.png"><img alt="../_images/qeq-example.png" src="../_images/qeq-example.png" style="width: 544.0px; height: 408.0px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Time evolution for <span class="math notranslate nohighlight">\(\langle 1| \rho |1 \rangle\)</span> with the initial condition <span class="math notranslate nohighlight">\(\rho_{t=0} = |0 \rangle \langle 0|\)</span></span><a class="headerlink" href="#id6" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
 </dd></dl>
 
 </section>
