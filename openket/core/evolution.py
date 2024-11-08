@@ -202,12 +202,12 @@ def Qeq(R, Rdot, basis, filename = "func", dictname = "dic", GSL = False):
         f.write('#include <gsl/gsl_errno.h>\n')
         f.write('#include <gsl/gsl_matrix.h>\n')
         f.write('#include <gsl/gsl_odeiv2.h>\n\n')
-        f.write('int func (double t, double y[], double f[], void *params) {\n')
+        f.write('int func (double t, const double y[], double f[], void *params) {\n')
 
         # crea la lista de valores reales e imaginarios W = [Re1,Im1,...,...,Ren*n,Imn*n]
         W = []
         n = len(basis)
-        for i in range( n*n ):
+        for k in range( n*n ):
             W.append(symbols('Re%d' %k, real=True, each_char=False))
             W.append(symbols('Im%d' %k, real=True, each_char=False))
 
@@ -221,7 +221,7 @@ def Qeq(R, Rdot, basis, filename = "func", dictname = "dic", GSL = False):
         # escribe el sistema de ecuaciones para encontrar los valores a,b de los coeficientes a+ib
         for i,ele in enumerate(basis):
             bra = Adj(ele)
-            print (i,"/",len(basis))
+            # print (i,"/",len(basis))
             clear_cache()
             for j,ket in enumerate(basis):
                 k = 2*(i*n + j)
@@ -234,7 +234,7 @@ def Qeq(R, Rdot, basis, filename = "func", dictname = "dic", GSL = False):
                         re = re.subs(var_subs,lista[var_subs])
                 f.write('  ' + 'f[%d] = ' %k + str(re) + ';\n')
                 for var_subs in im.atoms(Symbol):
-                    if "var_subs" in lista:
+                    if var_subs in lista:
                         im = im.subs(var_subs,lista[var_subs])
                 k = k + 1
                 f.write('  ' + 'f[%d] = ' %k + str(im) + ';\n')
@@ -285,7 +285,7 @@ def Qeq(R, Rdot, basis, filename = "func", dictname = "dic", GSL = False):
         f.write('    ' + 'return [')    
         for i,ele in enumerate(basis):
             bra = Adj(ele)
-            print (i,"/",len(basis))
+            # print (i,"/",len(basis))
             clear_cache()
             for j,ket in enumerate(basis):
                 z = bra*Rdot*ket
@@ -304,10 +304,8 @@ def Qeq(R, Rdot, basis, filename = "func", dictname = "dic", GSL = False):
                     f.write(']\n')
                 else:
                     f.write(',\n')
-        f.close()
 
         # crea el diccionario que relaciona '<i|R|j>' con las y[i]
-        f = open(dictname, 'w')
         for bra in basis:
             bra = Adj(bra)
             for ket in basis:
@@ -317,6 +315,6 @@ def Qeq(R, Rdot, basis, filename = "func", dictname = "dic", GSL = False):
                     etiqueta = regex.search("\[(.*)\]",str(lista[var_subs]))
                     temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
                 f.write("'" + str(bra*R*ket) + "'" + ':' + \
-                str(temp) + ',')
+                str(temp) + ',\n')
         f.write( '}')
         f.close()
