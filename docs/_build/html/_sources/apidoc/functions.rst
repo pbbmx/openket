@@ -8,8 +8,6 @@ Functions
 Metrics on states or operators
 =================================================
 
-.. _func-adj:
-
 -------------------
 Adj
 -------------------
@@ -18,8 +16,6 @@ Adj
 
 
 
-.. _func-normalize:
-
 -------------------
 Normalize
 -------------------
@@ -27,7 +23,6 @@ Normalize
 .. autofunction:: openket.core.metrics.Normalize
 
 
-.. _func-commutator:
 
 -------------------
 Commutator
@@ -36,7 +31,6 @@ Commutator
 .. autofunction:: openket.core.metrics.Commutator
 
 
-.. _func-traceout:
 
 -------------------
 TraceOut
@@ -45,8 +39,6 @@ TraceOut
 .. autofunction:: openket.core.metrics.TraceOut
 
 
-
-.. _func-trace:
 
 -------------------
 Trace
@@ -61,8 +53,6 @@ Trace
 Visualization
 =================================================
 
-.. _func-qmatrix:
-
 -------------------
 Qmatrix
 -------------------
@@ -71,34 +61,33 @@ Qmatrix
 
 
 
+
 =================================================
 Time evolution
 =================================================
-
-.. _func-dictionary:
-
--------------------
-Dictionary
--------------------
-
-.. autofunction:: openket.core.evolution.Dictionary
-
-
-
-.. _func-qch:
-
--------------------
-Qch
--------------------
-
-.. autofunction:: openket.core.evolution.Qch
-
-
-
-.. _func-qeq:
 
 -------------------
 Qeq
 -------------------
 
 .. autofunction:: openket.core.evolution.Qeq
+
+
+
+
+=================================================
+Utility functions
+=================================================
+
+-------------------
+Dictionary
+-------------------
+
+.. autofunction:: openket.core.metrics.Dictionary
+
+
+-------------------
+Qch
+-------------------
+
+.. autofunction:: openket.core.metrics.Qch

@@ -7,10 +7,10 @@ def Adj(A):
     """
     This function calculates the hermitian conjugate of a quantum object.
 
-    :param A: Openket expression, this could be a :obj:`Bra`, :obj:`Ket`, :obj:`Operator` or complex number.
-    :type A: :obj:`DiracObject`
+    :param A: Could be a :obj:`Bra`, :obj:`Ket`, :obj:`Operator` or complex number.
+    :type A: :obj:`openket.DiracObject`
     :return: The hermitian conjugate of ``A``.
-    :rtype: :obj:`DiracObject`
+    :rtype: :obj:`openket.DiracObject`
 
     Examples
     ^^^^^^^^^
@@ -61,10 +61,10 @@ def Adj(A):
 def Commutator(A, B):
     """This function calculates the conmutator of two operators.
 
-    :param A: The operator or matrix.
-    :type A: :obj:`Operator`
-    :param B: The operator or matrix.
-    :type B: :obj:`Operator`
+    :param A: Operator one.
+    :type A: :obj:`Operator` or matrix
+    :param B: Operator two.
+    :type B: :obj:`Operator` or matrix
     :return: The conmutator of ``A`` and ``B``.
     :rtype: :obj:`Operator`
     """
@@ -133,15 +133,15 @@ def TraceOut(A, htag):
 def Trace(A, basis = 'default'):
     """
     This function computes the total trace of a sum of exterior products or density matrix.
-    It finds the total number of Hilbert spaces and their tags and then it uses :obj:`TraceOut` over
-    all of them succesively, returning a complex number.
+    It finds the total number of Hilbert spaces and their tags and then it uses :obj:`openket.TraceOut <openket.core.metrics.TraceOut>`
+    over all of them succesively, returning a complex number.
 
     :param A: Bipartite density matrix or total expression of outer products.
     :type A: Linear combination of :obj:`Ket`:obj:`Bra` objects
     :param basis: 
     :type basis:
     :return: The total trace of ``A`` acting in all Hilbert spaces.
-    :rtype: number
+    :rtype: float
 
     Example
     ^^^^^^^^^
@@ -176,9 +176,9 @@ def Normalize(state):
     This function produces a vector in a Hilbert space with norm equal to unity.
 
     :param state: Total expression of vector(s) or a quantum state.
-    :type state: :obj:`DiracObject`
+    :type state: :obj:`openket.DiracObject`
     :return: The normalized corresponding state.
-    :rtype: :obj:`DiracObject`
+    :rtype: :obj:`openket.DiracObject`
     """
     norm = (Adj(state)*state)
     norm = float(norm)
@@ -195,7 +195,7 @@ def Qmatrix(A, basis = 'default'):
                     If no basis is specified, the function founds out how many different kets or bras
                     the expression (sum of the outer products) contains, to determine the basis and the size of the matrix.
                     For the moment, these can only be eigenvectors of a single operator.
-    :type basis: list, optional
+    :type basis: array, optional
     :raises Exception: Raised if exterior products are expressed in differents Hilbert spaces.
     :return: The matrix representation of ``A`` in ``basis`` or a default basis.
     :rtype: Sympy Matrix
@@ -238,3 +238,88 @@ def Qmatrix(A, basis = 'default'):
             M.append(row)
         M = Matrix(M)
     return M
+
+def Dictionary(A, basis):
+    """This function creates a dictionary object with keys as :math:`\\langle i|\\rho|j \\rangle` objects in a given basis and their definitions as values.
+    The function creates variables representing a complex number, *e.g. a+ib*, where *a* and *b* are defined as real variables.
+    If the basis used has :math:`n` elements, :math:`n^2` variables are created.
+    It is assumed that all variables are complex and the definition of each :math:`\\langle i|\\rho|j \\rangle` are the variables themselves.
+
+    :param A: The operator involved.
+    :type A: :obj:`Operator`
+    :param basis: List of :obj:`Ket` objects containing all the elements of the basis.
+    :type basis: array
+    :return: Dictionary object whose keys correspond to :math:`\\langle i|` ``A`` :math:`|j \\rangle` objects in the basis ``basis``,
+            and the values to their corresponding defition represented as variable.
+    :rtype: dict
+
+    Example
+    ^^^^^^^^^
+
+        .. code-block:: python
+
+            >>> b = [Ket(0), Ket(1)]
+            >>> R = Operator("R")
+            >>> Dictionary(R, b)
+            {'<0|R|0>': I*Im0 + Re0, '<0|R|1>': I*Im1 + Re1, '<1|R|0>': I*Im2 + Re2, '<1|R|1>': I*Im3 + Re3}
+
+    """
+    n = len(basis)
+    u = []
+    w = []
+    t = []
+    for i in range( n*n ):
+        u.append('Re%d' %i)
+        u[i] = symbols('Re%d' %i, real=True, each_char=False)
+        w.append('Im%d' %i)
+        w[i] = symbols('Im%d' %i, real=True, each_char=False)
+    for i in range(len(u)):
+        t.append(u[i] + I*w[i])
+    D = {}
+    k = 0
+    for i in range(n):
+        for j in range(n):
+            D[str(Adj(basis[i])*A*basis[j])] = t[k]
+            k = k + 1
+    return D
+
+def Qch(expr, dic):
+    """This function looks within a given expression for keys in the :obj:`openket.Dictionary <openket.core.metrics.Dictionary>`
+    dictionary, and substitutes them with their value.
+    It discriminates coefficients and other terms which are not in the dictionary, leaving them the same.
+
+    :param expr: Openket expression of a sum of :math:`\\langle i|\\rho|j \\rangle` objects.
+    :type expr: Lineal combination of :obj:`Bra`:obj:`Operator`:obj:`Ket` objects.
+    :param dic: Dictionary object given by the :obj:`openket.Dictionary <openket.core.metrics.Dictionary>` function.
+    :type dic: dict
+    :return: The total mathematical expression of ``expr`` represented by ``D`` values.
+    :rtype: Sympy expression
+
+    Example
+    ^^^^^^^^^
+
+        .. code-block:: python
+
+            >>> b = [Ket(0), Ket(1)]
+            >>> R = Operator("R")
+            #{'<0|R|0>': I*Im0 + Re0, '<0|R|1>': I*Im1 + Re1, '<1|R|0>': I*Im2 + Re2, '<1|R|1>': I*Im3 + Re3}
+            >>> D = Dictionary(R, b)
+            #<0|R|0> + 2*I<0|R|1> +  - 3.4<1|R|1>
+            >>> expression =  Bra(0)*R*Ket(0)+2*I*Bra(0)*R*Ket(1)-3.4*Bra(1)*R*Ket(1)
+            >>> Qch(expr, D)
+            I*Im0 + Re0 + 2*I*(I*Im1 + Re1) - 3.4*I*Im3 - 3.4*Re3
+
+    """
+    if expr == 0.0:
+        l = [0]
+    else:
+        expr = DiracSum(expr)
+        L = expr.terms
+        l = []
+        for i in L:
+            y = DiracMult(1,*i.factors)
+            if str(y) in dic:
+                y = str(y)
+                y = dic[y]
+            l.append(y * (i.coef))
+    return Add(*l)

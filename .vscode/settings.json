@@ -1,0 +1,5 @@
+{
+    "files.associations": {
+        "gsl_odeiv2.h": "c"
+    }
+}
