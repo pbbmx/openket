@@ -54,7 +54,7 @@ class DiracObject(object):
     
 class Ket(DiracObject):
     """
-    A class for representing a state, called ket. *Ket* is a class inheritanced from `DiracObject`.
+    A class for representing a state, called ket. Class inheritanced from :obj:`openket.DiracObject`.
 
     :param a: Vector tag. Must be either a number class or a Sympy variable.
     :type a: int or Sympy variable
@@ -64,7 +64,7 @@ class Ket(DiracObject):
 
     Examples
     ^^^^^^^^^
-    In this example *x* and *v* are two different objects. *x* is a Sympy variable and *v* is the object `Ket`.
+    In this example :code:`x` and :code:`ket_x` are two different objects, :code:`x` is a Sympy variable and :code:`ket_x` is the object :obj:`Ket`.
 
         .. code-block:: python
 
@@ -73,7 +73,7 @@ class Ket(DiracObject):
             >>> ket_x
             |x>
 
-    In the following example, although `u` and `w` have the same vector tag, they are not treated as the same object. For this kind of tags,
+    In the following example, although :code:`a` and :code:`b` have the same vector tag, they are not treated as the same object. For this kind of tags,
     strings as well as Sympy variables may be used.
 
         .. code-block:: python
@@ -97,8 +97,7 @@ class Ket(DiracObject):
 
 class Bra(DiracObject):
     """
-    A class for representing the vectors corresponding to the dual space, called bras.
-    *Bra* is a class inheritanced from `DiracObject`.
+    A class for representing the vectors corresponding to the dual space, called bras. Class inheritanced from :obj:`openket.DiracObject`.
 
     :param a: Vector dual tag. Must be either a number class or a Sympy variable.
     :type a: int or Sympy variable
@@ -109,7 +108,7 @@ class Bra(DiracObject):
 
     Example
     ^^^^^^^^^
-    In this example `y` and `z` are two different objects. `y` is a Sympy variable and `z` is the object *Bra*.
+    In this example :code:`y` and :code:`bra_y` are two different objects, :code:`y` is a Sympy variable and :code:`bra_y` is the object :obj:`Bra`.
 
         .. code-block:: python
             
@@ -134,14 +133,14 @@ class Bra(DiracObject):
 
 class Operator(DiracObject):
     """
-    A class for representing an operator. `Operator` is a class inheritanced from `DiracObject`.
+    A class for representing an operator. Class inheritanced from :obj:`openket.DiracObject`.
 
     :param A: Operator tag.
     :type A: string
 
     Example
     ^^^^^^^^^
-    The symbol on the left of the equality does not need to be the same as the argument of Operator, this is just how you are calling it,
+    The symbol on the left of the equality does not need to be the same as the argument of :obj:`Operator`, this is just how you are calling it,
     where as the argument is how OpenKet tags it.
 
         .. code-block:: python
@@ -162,7 +161,7 @@ class Operator(DiracObject):
         return str(self.op)
 
 class AdjointOperator(DiracObject):
-    """Definition of the dual operator class. *AdjointOperator* is a class inheritanced from `DiracObject`."""
+    """Definition of the dual operator class. Class inheritanced from :obj:`openket.DiracObject`."""
     def __init__(self, A):
         self.op = A
     def __repr__(self):
@@ -170,7 +169,7 @@ class AdjointOperator(DiracObject):
 
 class CreationOperator(DiracObject):
     """
-    A class for representing the Creation operator. *CreationOperator* is a class inheritanced from `DiracObject`.
+    A class for representing the Creation operator. Class inheritanced from :obj:`openket.DiracObject`.
 
     .. math::
 
@@ -209,7 +208,7 @@ class CreationOperator(DiracObject):
 
 class AnnihilationOperator(DiracObject):
     """
-    A class for representing the Annihilation operator. *AnnihilationOperator* is a class inheritanced from `DiracObject`.
+    A class for representing the Annihilation operator. Class inheritanced from :obj:`openket.DiracObject`.
 
     .. math::
 

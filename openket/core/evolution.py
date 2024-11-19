@@ -178,23 +178,25 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
             h0 = options.get('h0', 1e-6)
             atol = options.get('atol', 1e-6)
             rtol = options.get('rtol', 0.0)
-            ti = float(min(t)); tf = float(max(t)); m = len(t)
-            y0 = str([float(y) for y in y0])[1:-1]
+            
+            lt = len(t) if t is not None else 0
+            y0 = str([float(y) for y in y0])[1:-1] if y0 is not None else ""
+            t = str(t.tolist())[1:-1] if t is not None else ""
 
             f.write('    ' + 'gsl_odeiv2_system sys = {func, NULL, dim, NULL}; //{function, jacobian, dimension, params}\n')
             f.write('    ' + f'gsl_odeiv2_driver *driver = gsl_odeiv2_driver_alloc_y_new(&sys, gsl_odeiv2_step_rk8pd, {str(h0)}, {str(atol)}, {str(rtol)});\n\n')
-            f.write('    ' + f'double t = {ti}, tf = {tf};\n')
+            f.write('    ' + 'double t[%d] = { '%lt+t+' };\n')
             f.write('    ' + 'double y[%d] = { '%dim+y0+' };\n')
-            f.write('    ' + 'for (int i = 1; i <= %d; i++) {\n' %m)
-            f.write('    ' + '    ' + f'double ti = i * tf / {str(float(m))};\n')
-            f.write('    ' + '    ' + 'int status = gsl_odeiv2_driver_apply(driver, &t, ti, y);\n')
+            f.write('    ' + 'for (int i = 0; i <= %d; i++) {\n'%(lt-1))
+            f.write('    ' + '    ' + f'double ti = t[i];\n')
+            f.write('    ' + '    ' + 'int status = gsl_odeiv2_driver_apply(driver, &t[0], ti, y);\n')
             f.write('    ' + '    ' + 'if (status != GSL_SUCCESS) {\n')
             f.write('    ' + '    ' + '    ' + 'printf("Error en gsl_odeiv2_driver_apply: %s\\n", gsl_strerror(status));\n')
             f.write('    ' + '    ' + '    ' + 'break;\n')
             f.write('    ' + '    ' + '} else {\n')
-            f.write('    ' + '    ' + '    ' + 'printf("Step succeeded for t = %.5f\\n", t);\n')
+            f.write('    ' + '    ' + '    ' + 'printf("Step succeeded for t = %.5f\\n", t[0]);\n')
             f.write('    ' + '    ' + '}\n\n')
-            f.write('    ' + '    ' + 'printf("t = %.5f\\t", t);\n')
+            f.write('    ' + '    ' + 'printf("t = %.5f\\t", t[0]);\n')
             f.write('    ' + '    ' + 'for (int j = 0; j < dim; j++) {\n')
             f.write('    ' + '    ' + '    ' + 'printf("y[%d] = %.5f\\t", j, y[j]);\n')
             f.write('    ' + '    ' + '}\n')
