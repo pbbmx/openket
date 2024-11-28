@@ -64,15 +64,6 @@ class Ket(DiracObject):
 
     Examples
     ^^^^^^^^^
-    In this example :code:`x` and :code:`ket_x` are two different objects, :code:`x` is a Sympy variable and :code:`ket_x` is the object :obj:`Ket`.
-
-        .. code-block:: python
-
-            >>> x = var("x")
-            >>> ket_x = Ket(x)
-            >>> ket_x
-            |x>
-
     In the following example, although :code:`a` and :code:`b` have the same vector tag, they are not treated as the same object. For this kind of tags,
     strings as well as Sympy variables may be used.
 
@@ -112,13 +103,12 @@ class Bra(DiracObject):
 
         .. code-block:: python
             
-            >>> y = var("y")
-            >>> bra_y = Bra(y)
-            >>> bra_y
+            >>> y = Bra(var("y"))
+            >>> y
             <y|
-            >>> bra_y.eig
+            >>> y.eig
             y
-            >>> bra_y.op
+            >>> y.op
             'default'
 
     """
@@ -140,17 +130,12 @@ class Operator(DiracObject):
 
     Example
     ^^^^^^^^^
-    The symbol on the left of the equality does not need to be the same as the argument of :obj:`Operator`, this is just how you are calling it,
-    where as the argument is how OpenKet tags it.
 
         .. code-block:: python
 
-            >>> A = Operator("A");
-            >>> A
-            A
-            >>> name = Operator("up")
+            >>> name = Operator("op")
             >>> name.op
-            'up'
+            'op'
 
     It is convenient to have the same tags if no confusion is produced. However the option is always available to name objects the way we want.
 

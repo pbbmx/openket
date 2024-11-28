@@ -27,17 +27,6 @@ def Adj(A):
             >>> Adj(Bra(1))
             |1>
 
-    Of course, it's all possible to calculate the norm of any state.
-
-        .. code-block:: python
-
-            >>> w = I*Ket(0) - 4*Ket(1)
-            >>> w
-            I|0> - 4|1>
-            >>> norm = Adj(w)*w
-            >>> norm
-            17
-
     """
 
     if isinstance(A, Bra):
@@ -79,26 +68,6 @@ def TraceOut(A, htag):
     :type htag: string
     :return: The partial trace of ``A`` acting only in ``htag`` space.
     :rtype: Linear combination of :obj:`Ket`:obj:`Bra` objects
-
-    Example
-    ^^^^^^^^^
-
-        .. code-block:: python
-
-            >>> psi = Ket(0,"A")*Ket(1,"B") - Ket(1,"A")*Ket(0,"B")
-            >>> psi
-            |0_A>|1_B> - |1_A>|0_B>
-            >>> R = psi*Adj(psi)
-            >>> R
-            |0_A>|1_B><1_B|<0_A| - |0_A>|1_B><0_B|<1_A| - |1_A>|0_B><1_B|<0_A| + |1_A>|0_B><0_B|<1_A|
-            >>>
-            >>>
-            >>> RB = TraceOut(R,"A")
-            >>> RB
-            |0_B><0_B| + |1_B><1_B|
-            >>> RA = TraceOut(R,"B")
-            >>> RA
-            |0_A><0_A| + |1_A><1_A|
 
     """
     A = _expandir(A)
@@ -142,15 +111,6 @@ def Trace(A, basis = 'default'):
     :type basis:
     :return: The total trace of ``A`` acting in all Hilbert spaces.
     :rtype: float
-
-    Example
-    ^^^^^^^^^
-    Continuing with the previus example:
-
-        .. code-block:: python
-
-            >>> Trace(R)
-            2
 
     """
     if basis == 'default':
