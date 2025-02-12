@@ -142,7 +142,7 @@ def Normalize(state):
     """
     norm = (Adj(state)*state)
     norm = float(norm)
-    state = state / (norm**0.5)
+    state = state *norm**-0.5
     return state
 
 def Qmatrix(A, basis = 'default'):
