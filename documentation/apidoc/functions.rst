@@ -77,6 +77,14 @@ Time evolution
 =================================================
 
 -------------------
+InitialCondition
+-------------------
+
+.. autofunction:: openket.core.evolution.InitialCondition
+
+
+
+-------------------
 Qeq
 -------------------
 

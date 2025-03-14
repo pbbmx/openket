@@ -26,6 +26,7 @@ def InitialCondition(R, R0, basis, dic):
     """
     n=len(basis)
     ini = [0]*(2*n**2)
+    # ini = [0]*(n*(n+1))
     tempdic = {}
     for i in basis:
         for j in basis:
@@ -36,6 +37,28 @@ def InitialCondition(R, R0, basis, dic):
     for i in tempdic.keys():
         ini[int(str(i).partition('y')[-1])] = tempdic[i]
     return ini
+
+def SubsSol(obs, sol):
+    """This function converts variable expressions to the time evolution
+    (obtained by odeint) of the corresponding observable. The input expression
+    is obs, while sol is the object returned by odeint, and b is the base
+    used in Qeq"""
+    temp={}; L = []
+    if len(obs.args) == 0:
+        for count1 in range(len(sol)):
+            L.append(sol[:, int(str(obs).partition('y')[-1])][count1])
+            clear_cache()   #Limpia el cache para que no ocupe toda la memoria
+    else:
+        for count1 in range(len(sol)):
+            List = obs.args
+            for count2 in List:
+                for count3 in count2.atoms(Symbol):
+                    temp[count3] = sol[:, int(str(count3).partition('y')[-1])][count1]
+                    clear_cache()   #Limpia el cache para que no ocupe toda la memoria
+            L.append(obs.subs(temp))
+            clear_cache()   #Limpia el cache para que no ocupe toda la memoria
+    L=list(L)
+    return L
 
 def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filename="func", dictname="dic"):
     """
@@ -247,7 +270,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
                 temp = bra*R*ket
                 temp = Qch(temp, D)
                 for var_subs in temp.atoms(Symbol):
-                    etiqueta=regex.search("\[(.*)\]",str(lista[var_subs]))
+                    etiqueta=regex.search("\\[(.*)\\]",str(lista[var_subs]))
                     temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
                 f.write("'" + str(bra*R*ket) + "'" + ':' + \
                 str(temp) + ',\n')
@@ -308,7 +331,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
                     temp = bra*R*ket
                     temp = Qch(temp, D)
                     for var_subs in temp.atoms(Symbol):
-                        etiqueta = regex.search("\[(.*)\]",str(lista[var_subs]))
+                        etiqueta = regex.search("\\[(.*)\\]",str(lista[var_subs]))
                         temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
                     f.write("'" + str(bra*R*ket) + "'" + ':' + str(temp) + ',\n')
             f.write( '}')
@@ -366,7 +389,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
                 temp = bra*R*ket
                 temp = Qch(temp, D)
                 for var_subs in temp.atoms(Symbol):
-                    etiqueta = regex.search("\[(.*)\]",str(lista[var_subs]))
+                    etiqueta = regex.search("\\[(.*)\\]",str(lista[var_subs]))
                     temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
                 script += "'" + str(bra*R*ket) + "'" + ':' + str(temp) + ',\n'
         script += '}\n\n'
