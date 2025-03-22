@@ -31,17 +31,8 @@ except ImportError:
 else:
     del scipy
 
-# Relative imports of submodules and important functions/classes
-from .core.diracobject import (
-    Ket,
-    Bra,
-    Operator,
-    CreationOperator,
-    AnnihilationOperator
-)
-from .core.metrics import *
-from .core.gates import *
-from .core.evolution import *
+#Import modules
+from .core import *
 
 
 # Startup message
