@@ -10,8 +10,8 @@ setup(
     url="https://github.com/pbbmx/openket.git",
     packages=find_packages(include=["openket", "openket.*"]),
     install_requires=[
-        "sympy>=1.13.2",
-        "scipy>=1.14.1"
+        "sympy>=1.0",
+        "scipy>=1.0"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

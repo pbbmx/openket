@@ -1,0 +1,609 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>States and operators manipulation &#8212; OpenKet 0.1.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=a1637f0b"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'guide/guide-manipulating';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Time evolution" href="guide-evolution.html" />
+    <link rel="prev" title="Basic operations on Quantum objects" href="guide-basic.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">OpenKet 0.1.0 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="guide.html">Users Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="guide-introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide-basic.html">Basic operations on Quantum objects</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">States and operators manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide-evolution.html">Time evolution</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../apidoc/apidoc.html">API documentation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../apidoc/classes.html">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apidoc/functions.html">Functions</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/guide/guide-manipulating.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>States and operators manipulation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics">Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conmutator">Conmutator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#normalize">Normalize</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hermitian-conjugate">Hermitian Conjugate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trace-and-partial-trace">Trace and Partial Trace</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#matrix-representation">Matrix Representation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-operators">Built-in operators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gates">Gates</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="states-and-operators-manipulation">
+<span id="manipulating"></span><h1>States and operators manipulation<a class="headerlink" href="#states-and-operators-manipulation" title="Link to this heading">#</a></h1>
+<p>In the previous guide section <a class="reference internal" href="guide-basic.html#basic"><span class="std std-ref">Basic operations on Quantum objects</span></a>, we saw how to use kets, bras and operators,
+using the OpenKet classes. Now we will look at some metrics and manipulations on quantum objets.
+Also, we will present special basic operators and states, and how they work.</p>
+<section id="metrics">
+<h2>Metrics<a class="headerlink" href="#metrics" title="Link to this heading">#</a></h2>
+<section id="conmutator">
+<h3>Conmutator<a class="headerlink" href="#conmutator" title="Link to this heading">#</a></h3>
+</section>
+<section id="normalize">
+<h3>Normalize<a class="headerlink" href="#normalize" title="Link to this heading">#</a></h3>
+</section>
+<section id="hermitian-conjugate">
+<h3>Hermitian Conjugate<a class="headerlink" href="#hermitian-conjugate" title="Link to this heading">#</a></h3>
+<p>OpenKet is able to calculate the hermitian conjugate of the argument you input, be it a number,
+a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code>, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Bra</span></code>, an <code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code> or a combination of them, using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Adj</span></code> function.
+For example,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Definition of bras and kets</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">var</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
+<span class="n">ket_n</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="n">bra_n</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="c1">#Adj</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(I|n&gt;)⁺ =&quot;</span><span class="p">,</span><span class="n">Adj</span><span class="p">(</span><span class="n">ket_n</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(-I&lt;n|)⁺ =&quot;</span><span class="p">,</span><span class="n">Adj</span><span class="p">(</span><span class="o">-</span><span class="n">sp</span><span class="o">.</span><span class="n">I</span><span class="o">*</span><span class="n">bra_n</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Output</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(I|n&gt;)⁺ = &lt;n|
+(-I&lt;n|)⁺ = I|n&gt;
+</pre></div>
+</div>
+<p>This is particularly useful for computing the density operator of a state, or its norm:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Definition of the state</span>
+<span class="n">psi</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We define the state |psi&gt; = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="p">)</span>
+<span class="c1">#Adj</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|psi&gt;⁺ = &lt;psi| = &quot;</span><span class="p">,</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span>
+<span class="c1">#Norm</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;psi|psi&gt; = &quot;</span><span class="p">,</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span><span class="p">)</span>
+<span class="c1">#Density operator</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rho = |psi&gt;&lt;psi|/2 = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p><strong>Output</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>We define the state |psi&gt; = |0&gt; + |1&gt;
+|psi&gt;⁺ = &lt;psi| = &lt;0| + &lt;1|
+&lt;psi|psi&gt; = 2
+|psi&gt;&lt;psi| = |0&gt;&lt;0| + |0&gt;&lt;1| + |1&gt;&lt;0| + |1&gt;&lt;1|
+rho = |psi&gt;&lt;psi|/2 = (1/2)|0&gt;&lt;0| + (1/2)|0&gt;&lt;1| + (1/2)|1&gt;&lt;0| + (1/2)|1&gt;&lt;1|
+</pre></div>
+</div>
+</section>
+<section id="trace-and-partial-trace">
+<h3>Trace and Partial Trace<a class="headerlink" href="#trace-and-partial-trace" title="Link to this heading">#</a></h3>
+<p>OpenKet allows us to trace or partially trace states expressed as a sum of exterior
+products. Let’s first look into <code class="xref py py-obj docutils literal notranslate"><span class="pre">TraceOut</span></code>. This has 2 arguments: the first one is
+the total expression and the second one is the operator tag of the space you will
+be tracing out.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#State definition in two spaces</span>
+<span class="n">psi</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;psi = |00&gt; + |11&gt; = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="p">)</span>
+<span class="c1">#Proyector operator</span>
+<span class="n">P_psi</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P_|psi&gt; = |psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">P_psi</span><span class="p">)</span>
+<span class="c1">#TraceOut</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace of P_|psi&gt; in H1 space: &quot;</span><span class="p">,</span><span class="n">TraceOut</span><span class="p">(</span><span class="n">P_psi</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace of P_|psi&gt; in H2 space: &quot;</span><span class="p">,</span><span class="n">TraceOut</span><span class="p">(</span><span class="n">P_psi</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Output</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>psi = |00&gt; + |11&gt; = |0_H1&gt;|0_H2&gt; +  - |1_H1&gt;|1_H2&gt;
+P_|psi&gt; = |psi&gt;&lt;psi| = |0_H1&gt;|0_H2&gt;&lt;0_H2|&lt;0_H1| +  - |0_H1&gt;|0_H2&gt;&lt;1_H2|&lt;1_H1| +  - |1_H1&gt;|1_H2&gt;&lt;0_H2|&lt;0_H1| + |1_H1&gt;|1_H2&gt;&lt;1_H2|&lt;1_H1|
+Trace of P_|psi&gt; in H1 space: |0_H2&gt;&lt;0_H2| + |1_H2&gt;&lt;1_H2|
+Trace of P_|psi&gt; in H2 space: |0_H1&gt;&lt;0_H1| + |1_H1&gt;&lt;1_H1|
+</pre></div>
+</div>
+<p>The total trace is done with the function <code class="xref py py-obj docutils literal notranslate"><span class="pre">Trace</span></code>. You only need to input the
+total expression, <cite>Trace</cite> first finds all the operator tags and will then partially trace
+them all out.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#State definition in one space</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;eta = &quot;</span><span class="p">,</span><span class="n">eta</span><span class="p">)</span>
+<span class="n">P_eta</span> <span class="o">=</span> <span class="n">eta</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P_|eta&gt; = |eta&gt;&lt;eta| = &quot;</span><span class="p">,</span><span class="n">P_eta</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total trace of P_|eta&gt;: &quot;</span><span class="p">,</span><span class="n">Trace</span><span class="p">(</span><span class="n">P_eta</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="c1">#State definition in two spaces</span>
+<span class="n">psi</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;psi = |00&gt; + |11&gt; = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="p">)</span>
+<span class="n">P_psi</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P_|psi&gt; = |psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">P_psi</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total trace of P_|psi&gt;: &quot;</span><span class="p">,</span><span class="n">Trace</span><span class="p">(</span><span class="n">P_psi</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Output</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>eta = |0&gt; +  - |1&gt;
+P_|eta&gt; = |eta&gt;&lt;eta| = |0&gt;&lt;0| +  - |0&gt;&lt;1| +  - |1&gt;&lt;0| + |1&gt;&lt;1|
+Total trace of P_|eta&gt;: 2
+
+psi = |00&gt; + |11&gt; = |0_H1&gt;|0_H2&gt; +  - |1_H1&gt;|1_H2&gt;
+P_|psi&gt; = |psi&gt;&lt;psi| = |0_H1&gt;|0_H2&gt;&lt;0_H2|&lt;0_H1| +  - |0_H1&gt;|0_H2&gt;&lt;1_H2|&lt;1_H1| +  - |1_H1&gt;|1_H2&gt;&lt;0_H2|&lt;0_H1| + |1_H1&gt;|1_H2&gt;&lt;1_H2|&lt;1_H1|
+Total trace of P_|psi&gt;: 2
+</pre></div>
+</div>
+<p>One application of this is to be able to find if we are dealing with a mixed or
+a pure state, by computing the square of the density operator and calculating its
+total trace.</p>
+<p>Suppose we have the pure state <span class="math notranslate nohighlight">\(\rho = |\psi \rangle \langle \psi|\)</span>, with
+<span class="math notranslate nohighlight">\(|\psi \rangle = (|0 \rangle - |1 \rangle)/ \sqrt{2}\)</span> and we
+have the state <span class="math notranslate nohighlight">\(\rho_2 = 0.25|0 \rangle \langle 0| + 0.75|1 \rangle \langle 1|\)</span>.
+First we input this states,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">psi</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">R1</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+<span class="n">R2</span> <span class="o">=</span> <span class="mf">0.25</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="n">Bra</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.75</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Bra</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Both of them have total traces equal to one, but if we square them and calculate their traces,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;R1 = |psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">R1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;R2 = &quot;</span><span class="p">,</span><span class="n">R2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace(R1*R1) = &quot;</span><span class="p">,</span><span class="n">Trace</span><span class="p">(</span><span class="n">R1</span><span class="o">*</span><span class="n">R1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace(R2*R2) = &quot;</span><span class="p">,</span><span class="n">Trace</span><span class="p">(</span><span class="n">R2</span><span class="o">*</span><span class="n">R2</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Output</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>R1 = |psi&gt;&lt;psi| = 0.5|0&gt;&lt;0| - 0.5|0&gt;&lt;1| - 0.5|1&gt;&lt;0| + 0.5|1&gt;&lt;1|
+R2 = 0.25|0&gt;&lt;0| + 0.75|1&gt;&lt;1|
+
+Trace(R1*R1) = 1
+Trace(R2*R2) = 0.625
+</pre></div>
+</div>
+<p>This concluding that R2 is not a pure state.</p>
+</section>
+<section id="matrix-representation">
+<h3>Matrix Representation<a class="headerlink" href="#matrix-representation" title="Link to this heading">#</a></h3>
+<p>We are able nonetheless to work with the matrix representation of operators. This
+is done via <code class="xref py py-obj docutils literal notranslate"><span class="pre">Qmatrix</span></code>. The function has 2 arguments, the first is the expression
+(sum of exterior products) and the second is the base in list form.
+For example, let’s obtain the matrix representation of <span class="math notranslate nohighlight">\(\sigma_x\)</span> in the computational
+basis <span class="math notranslate nohighlight">\(\{|0 \rangle, |1 \rangle \}\)</span> and <span class="math notranslate nohighlight">\(\{|+ \rangle, |- \rangle \}\)</span>,
+where <span class="math notranslate nohighlight">\(|\pm \rangle = (|0 \rangle \pm |1 \rangle)/ \sqrt{2}\)</span>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">basis1</span> <span class="o">=</span>  <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
+<span class="n">basis2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="p">(</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Qmatrix on basis {|0&gt;,|1&gt;}: &quot;</span><span class="p">,</span><span class="n">Qmatrix</span><span class="p">(</span><span class="n">X</span><span class="p">(),</span> <span class="n">base1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Qmatrix on basis {|+&gt;,|-&gt;}: &quot;</span><span class="p">,</span><span class="n">Qmatrix</span><span class="p">(</span><span class="n">X</span><span class="p">(),</span> <span class="n">base2</span><span class="p">))</span>
+</pre></div>
+</div>
+<p><strong>Output</strong>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Qmatrix on basis {|0&gt;,|1&gt;}: Matrix([[0, 1], [1, 0]])
+Qmatrix on basis {|+&gt;,|-&gt;}: Matrix([[1, 0], [0, -1]])
+</pre></div>
+</div>
+</section>
+</section>
+<section id="built-in-operators">
+<h2>Built-in operators<a class="headerlink" href="#built-in-operators" title="Link to this heading">#</a></h2>
+</section>
+<section id="gates">
+<h2>Gates<a class="headerlink" href="#gates" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="guide-basic.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Basic operations on Quantum objects</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="guide-evolution.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Time evolution</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics">Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conmutator">Conmutator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#normalize">Normalize</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hermitian-conjugate">Hermitian Conjugate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trace-and-partial-trace">Trace and Partial Trace</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#matrix-representation">Matrix Representation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#built-in-operators">Built-in operators</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gates">Gates</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By IIMAS UNAM
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024, IIMAS.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

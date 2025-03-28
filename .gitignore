@@ -6,9 +6,9 @@
 .idea/
 .vscode/
 env
-venv/
-.venv/
-docs
+build
+doc/_build
+#docs
 
 # Packages
 __pycache__/
