@@ -270,7 +270,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
                 temp = bra*R*ket
                 temp = Qch(temp, D)
                 for var_subs in temp.atoms(Symbol):
-                    etiqueta=regex.search("\\[(.*)\\]",str(lista[var_subs]))
+                    etiqueta=regex.search(r"\[(.*)\]",str(lista[var_subs]))
                     temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
                 f.write("'" + str(bra*R*ket) + "'" + ':' + \
                 str(temp) + ',\n')
@@ -331,7 +331,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
                     temp = bra*R*ket
                     temp = Qch(temp, D)
                     for var_subs in temp.atoms(Symbol):
-                        etiqueta = regex.search("\\[(.*)\\]",str(lista[var_subs]))
+                        etiqueta = regex.search(r"\[(.*)\]",str(lista[var_subs]))
                         temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
                     f.write("'" + str(bra*R*ket) + "'" + ':' + str(temp) + ',\n')
             f.write( '}')
@@ -389,7 +389,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
                 temp = bra*R*ket
                 temp = Qch(temp, D)
                 for var_subs in temp.atoms(Symbol):
-                    etiqueta = regex.search("\\[(.*)\\]",str(lista[var_subs]))
+                    etiqueta = regex.search(r"\[(.*)\]",str(lista[var_subs]))
                     temp = temp.subs(var_subs,Symbol("var('y"+etiqueta.groups()[0]+"',real=True)"))
                 script += "'" + str(bra*R*ket) + "'" + ':' + str(temp) + ',\n'
         script += '}\n\n'
