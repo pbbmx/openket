@@ -55,8 +55,8 @@ Finally, verify installation:
 
 .. code-block:: python
 
-   $$ import openket
-   $$ print(openket.__version__)
+   import openket
+   print(openket.__version__)
 
 
 

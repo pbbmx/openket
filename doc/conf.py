@@ -9,7 +9,7 @@
 import os
 import pathlib
 import sys
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 project = 'OpenKet'
 copyright = '2024, IIMAS'
@@ -37,6 +37,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = 'sphinx_book_theme'
 html_static_path = ['source/_static']
 templates_path = ['source/_templates']
+html_outdir = os.path.abspath('../docs')
 
 
 # If true, the current module name will be prepended to all description

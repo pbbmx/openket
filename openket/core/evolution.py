@@ -1,5 +1,5 @@
-from openket.core.diracobject import *
-from openket.core.metrics import *
+from diracobject import *
+from metrics import *
 from sympy import Symbol, symbols, expand
 from sympy.core.cache import clear_cache
 from pylab import conjugate

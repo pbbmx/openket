@@ -1,4 +1,4 @@
-from openket.core.diracobject import *
+from diracobject import *
 from sympy import I
 
 def X(A = 'default'):

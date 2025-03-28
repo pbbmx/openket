@@ -1,7 +1,7 @@
-from sympy import Matrix, I, symbols
-from openket.core.diracobject import _expandir
-from openket.core.diracobject import *
-from openket.core.gates import *
+from sympy import Matrix, I, symbols, Add
+from diracobject import AdjointOperator, DiracSum, DiracMult, _evaluar, _expandir, _canonic_mult, _canonic_suma, _is_equal
+from diracobject import *
+from gates import *
 
 def Adj(A):
     """
