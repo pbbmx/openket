@@ -1,5 +1,7 @@
-from diracobject import *
 from sympy import I
+from .diracobject import Ket,Bra
+
+__all__ = ['X','Y','Z']
 
 def X(A = 'default'):
     """

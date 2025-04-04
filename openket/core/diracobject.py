@@ -1,5 +1,7 @@
 from sympy import Add
 
+__all__ = ["Ket","Bra","Operator","CreationOperator","AnnihilationOperator"]
+
 class DiracObject(object):
     """
     A class for representing quantum objects, such as quantum operators and states.
@@ -160,7 +162,7 @@ class CreationOperator(DiracObject):
 
         \\begin{aligned}
         \hat{a}^{\dagger}|n\\rangle &= \sqrt{n+1}|n+1\\rangle \\\\
-        \\langle n| \hat{a}^{\dagger} &= \sqrt{n} \\langle n-1| \\\\
+        \\langle n| \\hat{a}^{\dagger} &= \sqrt{n} \\langle n-1| \\\\
         \\end{aligned}
 
     :param htag: Hilbert space tag.
@@ -199,7 +201,7 @@ class AnnihilationOperator(DiracObject):
 
         \\begin{aligned}
         \hat{a}|n\\rangle &= \sqrt{n}|n-1\\rangle \\\\
-        \\langle n| \hat{a} &= \sqrt{n+1} \\langle n+1| \\\\
+        \\langle n| \\hat{a} &= \sqrt{n+1} \\langle n+1| \\\\
         \\end{aligned}
 
     :param htag: Hilbert space tag.
@@ -686,6 +688,3 @@ def _is_equal(u, v):
                         break
         else:
             return False
-
-
-__all__ = ["Ket","Bra","Operator","CreationOperator","AnnihilationOperator"]

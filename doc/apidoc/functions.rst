@@ -83,6 +83,13 @@ InitialCondition
 .. autofunction:: openket.core.evolution.InitialCondition
 
 
+-------------------
+SubsSol
+-------------------
+
+.. autofunction:: openket.core.evolution.SubsSol
+
+
 
 -------------------
 Qeq

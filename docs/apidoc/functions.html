@@ -28,8 +28,8 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -37,7 +37,7 @@
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="../_static/documentation_options.js?v=a1637f0b"></script>
-    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -351,6 +351,10 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#openket.core.evolution.InitialCondition"><code class="docutils literal notranslate"><span class="pre">InitialCondition()</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subssol">SubsSol</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#openket.core.evolution.SubsSol"><code class="docutils literal notranslate"><span class="pre">SubsSol()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qeq">Qeq</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#openket.core.evolution.Qeq"><code class="docutils literal notranslate"><span class="pre">Qeq()</span></code></a></li>
 </ul>
@@ -642,15 +646,73 @@ Also, the density operator <code class="docutils literal notranslate"><span clas
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>R</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code>) – Operator involved. Corresponds to the density operator for which we want to calculte the evolution.</p></li>
 <li><p><strong>R0</strong> (Sum of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bra</span></code> objects) – Total expression of outer products.</p></li>
-<li><p><strong>basis</strong> (<em>array</em>) – List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code> objects containing all the elements of the basis.</p></li>
+<li><p><strong>basis</strong> (<em>list</em>) – List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code> objects containing all the elements of the basis.</p></li>
 <li><p><strong>dic</strong> (<em>dict</em>) – Dictionary object given by the <a class="reference internal" href="#openket.core.metrics.Dictionary" title="openket.core.metrics.Dictionary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.Dictionary</span></code></a> function.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Retuns a <span class="math notranslate nohighlight">\(2n^2\)</span> length array with the initial conditions values, which every two places correspond to a single complex number. <span class="math notranslate nohighlight">\(n\)</span> is the basis dimension.</p>
+<dd class="field-even"><p>Retuns a <span class="math notranslate nohighlight">\(2n^2\)</span> length list with the initial conditions values, which every two places correspond to a single complex number. <span class="math notranslate nohighlight">\(n\)</span> is the basis dimension.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>array</p>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<section id="id4">
+<h4>Example<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<p>Example with coherent states (quantum optics):</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Define parameters and basis</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Truncation level</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Coherent state amplitude</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;field&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>  <span class="c1"># Fock basis</span>
+
+<span class="go"># Create coherent state (initial condition)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state_alpha</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<span class="go">        state_alpha = state_alpha + ((alpha**i) / math.sqrt(math.factorial(i))) * Ket(i,&quot;field&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">state_alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">state_alpha</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rho0</span> <span class="o">=</span> <span class="n">state_alpha</span> <span class="o">*</span> <span class="n">Adj</span><span class="p">(</span><span class="n">state_alpha</span><span class="p">)</span>  <span class="c1"># Density matrix</span>
+
+<span class="go"># Generate initial conditions for ODE solver input</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">init_conditions</span> <span class="o">=</span> <span class="n">InitialCondition</span><span class="p">(</span>
+<span class="go">        R=Operator(&quot;R&quot;), </span>
+<span class="go">        R0=rho0, </span>
+<span class="go">        basis=base, </span>
+<span class="go">        dic=dic</span>
+<span class="go">    )</span>
+
+<span class="go"># init_conditions now contains the properly ordered initial values for all math:`y_i` variables</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Note: This example shows how to prepare initial conditions for a coherent state in quantum optics simulations.
+The resulting init_conditions can be used directly with <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code> or similar ODE solvers.</p>
+</section>
+</dd></dl>
+
+</section>
+<section id="subssol">
+<h3>SubsSol<a class="headerlink" href="#subssol" title="Link to this heading">#</a></h3>
+<dl class="py function">
+<dt class="sig sig-object py" id="openket.core.evolution.SubsSol">
+<span class="sig-name descname"><span class="pre">SubsSol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#openket.core.evolution.SubsSol" title="Link to this definition">#</a></dt>
+<dd><p>This function converts symbolic variable expressions into their corresponding time evolution values obtained from an ODE solution.
+It substitutes each symbolic variable in the input expression with its time series data from the ODE solution.
+The function handles both single variables and complex expressions containing multiple variables. For each time point in the solution, it substitutes the 
+variable values and evaluates the expression.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sol</strong> (<em>numpy.ndarray</em>) – The solution array returned by <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code>.
+Each column represents the time evolution of a variable (<span class="math notranslate nohighlight">\(y0\)</span>, <span class="math notranslate nohighlight">\(y1\)</span>, etc.), with rows corresponding to different time points.</p></li>
+<li><p><strong>dic</strong> (<em>dict</em>) – Dictionary object given by the <a class="reference internal" href="#openket.core.metrics.Dictionary" title="openket.core.metrics.Dictionary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.Dictionary</span></code></a> function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list containing the evaluated expression values at each time point. The length matches the number of time points in sol.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -666,7 +728,7 @@ for its time derivative, both given in a specified basis.
 This function creates a file called <code class="docutils literal notranslate"><span class="pre">filename</span></code> which defines a function
 in the sintaxis needed to feed <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html">Scipy’s ODE solver odeint</a>
 or <a class="reference external" href="https://www.gnu.org/software/gsl/doc/html/ode-initval.html">GSL’s ODE solver gsl_odeiv2.h</a>,
-or just applies the <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code> function with the given parameters.</p>
+or just applies the <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code> function with the given parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -675,19 +737,19 @@ or just applies the <code class="xref py py-obj docutils literal notranslate"><s
 <li><p><strong>basis</strong> (<em>array</em>) – List of <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code> objects containing all the elements of the basis.</p></li>
 <li><p><strong>y0</strong> (<em>array</em><em>, </em><em>optional</em>) – Initial condition on <span class="math notranslate nohighlight">\(y\)</span>, necessary for the solution only if <code class="code docutils literal notranslate"><span class="pre">file=None</span></code>.</p></li>
 <li><p><strong>t</strong> (<em>array</em><em>, </em><em>optional</em>) – A sequence of time points for which to solve for <span class="math notranslate nohighlight">\(y\)</span>, necessary if <code class="code docutils literal notranslate"><span class="pre">file=None</span></code>.</p></li>
-<li><p><strong>args</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Extra arguments to pass to <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code> function (see <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html">documentation</a>).</p></li>
+<li><p><strong>args</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Extra arguments to pass to <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code> function (see <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html">documentation</a>).</p></li>
 <li><p><strong>options</strong> (<em>dict</em><em>, </em><em>optional</em>) – <ul>
 <li><p><cite>file_suggestion</cite> (boolean): True if the file created includes a basic code to run the GSL’s ODE solver, only available if <code class="code docutils literal notranslate"><span class="pre">file=&quot;GSL&quot;</span></code>.</p></li>
-<li><p><cite>h0</cite> (float): The step size to be attempted on the first step, default at 1e-6 for <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> and 0.0 for <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code>.</p></li>
-<li><p><cite>atol</cite> (float): Absolute tolerance, default at 1e-6 for <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> and <code class="code docutils literal notranslate"><span class="pre">None</span></code> for <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code>.</p></li>
-<li><p><cite>rtol</cite> (float): Relative tolerance, default at 0.0 for <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> and <code class="code docutils literal notranslate"><span class="pre">None</span></code> for <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code>.</p></li>
-<li><p>Other Parameters: Other <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code> parameters (see <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html">documentation</a>).</p></li>
+<li><p><cite>h0</cite> (float): The step size to be attempted on the first step, default at 1e-6 for <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> and 0.0 for <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code>.</p></li>
+<li><p><cite>atol</cite> (float): Absolute tolerance, default at 1e-6 for <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> and <code class="code docutils literal notranslate"><span class="pre">None</span></code> for <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code>.</p></li>
+<li><p><cite>rtol</cite> (float): Relative tolerance, default at 0.0 for <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> and <code class="code docutils literal notranslate"><span class="pre">None</span></code> for <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code>.</p></li>
+<li><p>Other Parameters: Other <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code> parameters (see <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html">documentation</a>).</p></li>
 </ul>
 </p></li>
 <li><p><strong>file</strong> (<em>string</em><em>, </em><em>optional</em>) – <ul>
-<li><p><code class="code docutils literal notranslate"><span class="pre">file=None</span></code>: the function runs <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code> with the given parameters.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">file=None</span></code>: the function runs <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code> with the given parameters.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">file=&quot;GSL&quot;</span></code>: creates a C syntax file to <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> solver.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">file=&quot;Scipy&quot;</span></code>: creates a Python syntax file to <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code> solver.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">file=&quot;Scipy&quot;</span></code>: creates a Python syntax file to <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code> solver.</p></li>
 </ul>
 </p></li>
 <li><p><strong>filename</strong> (<em>string</em><em>, </em><em>optional</em>) – The name of the out file with the function.</p></li>
@@ -704,15 +766,15 @@ Finally it writes the function <span class="math notranslate nohighlight">\(f\)<
 <span class="math notranslate nohighlight">\(y\)</span> should be understood as a vector, which is defined entry-like as a list, and <span class="math notranslate nohighlight">\(t\)</span> is the time variable.
 <span class="math notranslate nohighlight">\(f\)</span> returns also a list, containig the expressions of the derivatives of each entry
 of <span class="math notranslate nohighlight">\(y\)</span> as entries of another list. 
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.odeint</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> understand this as a collection of coupled ODE to be solved, specifying
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">gsl_odeiv2.h</span></code> understand this as a collection of coupled ODE to be solved, specifying
 an initial condition and the time step.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array or file</p>
 </dd>
 </dl>
-<section id="id5">
-<h4>Example<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
+<section id="id6">
+<h4>Example<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
 <p>We will considerate the Two Level Semiclassical Atoms problem, when an atom interacts with an electromagnetic field.
 We can describe the atom using a 2 element base, let this basis be {<span class="math notranslate nohighlight">\(|0 \rangle, |1 \rangle\)</span>}.
 Furthermore let the energy of the levels be <span class="math notranslate nohighlight">\(\hbar \omega_0\)</span> and <span class="math notranslate nohighlight">\(\hbar \omega_1\)</span> respectively.
@@ -739,9 +801,9 @@ we end up with the Hamiltonian</p>
 <p>Where <span class="math notranslate nohighlight">\(\Omega = \frac{gA}{2 \hbar}\)</span> and we assume <span class="math notranslate nohighlight">\(\Omega = 1\)</span> for simplicity.
 Following is the script which numerically solves the time evolution of the system described.</p>
 <blockquote>
-<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">odeint</span>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">linspace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">odeint</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rho</span> <span class="o">=</span> <span class="n">Operator</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
@@ -763,11 +825,11 @@ with two positions in the list.
 Finally, the command <code class="code docutils literal notranslate"><span class="pre">solution[:,3]</span></code> partitions the total solution and only keeps the third entry 
 (<code class="code docutils literal notranslate"><span class="pre">y[3]</span></code> corresponding to <span class="math notranslate nohighlight">\(\langle 1| \rho |1 \rangle\)</span>) in all the lists within <cite>solution</cite>.
 The graph we obtain is the following.</p>
-<figure class="align-default" id="id8">
+<figure class="align-default" id="id9">
 <a class="reference internal image-reference" href="../_images/qeq-example.png"><img alt="../_images/qeq-example.png" src="../_images/qeq-example.png" style="width: 544.0px; height: 408.0px;" />
 </a>
 <figcaption>
-<p><span class="caption-text">Time evolution for <span class="math notranslate nohighlight">\(\langle 1| \rho |1 \rangle\)</span> with the initial condition <span class="math notranslate nohighlight">\(\rho_{t=0} = |0 \rangle \langle 0|\)</span></span><a class="headerlink" href="#id8" title="Link to this image">#</a></p>
+<p><span class="caption-text">Time evolution for <span class="math notranslate nohighlight">\(\langle 1| \rho |1 \rangle\)</span> with the initial condition <span class="math notranslate nohighlight">\(\rho_{t=0} = |0 \rangle \langle 0|\)</span></span><a class="headerlink" href="#id9" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </section>
@@ -801,8 +863,8 @@ and the values to their corresponding defition represented as variable.</p>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
-<section id="id6">
-<h4>Example<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<section id="id7">
+<h4>Example<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">R</span> <span class="o">=</span> <span class="n">Operator</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
@@ -837,8 +899,8 @@ It discriminates coefficients and other terms which are not in the dictionary, l
 <dd class="field-odd"><p>Sympy expression</p>
 </dd>
 </dl>
-<section id="id7">
-<h4>Example<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<section id="id8">
+<h4>Example<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">R</span> <span class="o">=</span> <span class="n">Operator</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>
@@ -933,6 +995,10 @@ It discriminates coefficients and other terms which are not in the dictionary, l
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-evolution">Time evolution</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initialcondition">InitialCondition</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#openket.core.evolution.InitialCondition"><code class="docutils literal notranslate"><span class="pre">InitialCondition()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subssol">SubsSol</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#openket.core.evolution.SubsSol"><code class="docutils literal notranslate"><span class="pre">SubsSol()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qeq">Qeq</a><ul class="nav section-nav flex-column">

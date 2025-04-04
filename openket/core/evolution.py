@@ -1,9 +1,11 @@
-from diracobject import *
-from metrics import *
-from sympy import Symbol, symbols, expand
+from sympy import Symbol, symbols, expand, I
 from sympy.core.cache import clear_cache
 from pylab import conjugate
 import re as regex
+
+from .metrics import Adj,Qch,Dictionary
+
+__all__ = ['InitialCondition','SubsSol','Qeq']
 
 
 def InitialCondition(R, R0, basis, dic):
@@ -18,11 +20,43 @@ def InitialCondition(R, R0, basis, dic):
     :param R0: Total expression of outer products.
     :type R0: Sum of :obj:`Ket`:obj:`Bra` objects
     :param basis: List of :obj:`Ket` objects containing all the elements of the basis.
-    :type basis: array
+    :type basis: list
     :param dic: Dictionary object given by the :obj:`openket.Dictionary <openket.core.metrics.Dictionary>` function.
     :type dic: dict
-    :return: Retuns a :math:`2n^2` length array with the initial conditions values, which every two places correspond to a single complex number. :math:`n` is the basis dimension.
-    :rtype: array
+    :return: Retuns a :math:`2n^2` length list with the initial conditions values, which every two places correspond to a single complex number. :math:`n` is the basis dimension.
+    :rtype: list
+
+    Example
+    ^^^^^^^^^
+
+    Example with coherent states (quantum optics):
+    
+        .. code-block:: python
+        
+            >>> # Define parameters and basis
+            >>> n = 10  # Truncation level
+            >>> alpha = 1  # Coherent state amplitude
+            >>> basis = [Ket(i,"field") for i in range(n)]  # Fock basis
+            
+            # Create coherent state (initial condition)
+            >>> state_alpha = 0
+            >>> for i in range(n):
+                    state_alpha = state_alpha + ((alpha**i) / math.sqrt(math.factorial(i))) * Ket(i,"field")
+            >>> state_alpha = np.exp(-(np.abs(alpha)**2)/2) * state_alpha
+            >>> rho0 = state_alpha * Adj(state_alpha)  # Density matrix
+            
+            # Generate initial conditions for ODE solver input
+            >>> init_conditions = InitialCondition(
+                    R=Operator("R"), 
+                    R0=rho0, 
+                    basis=base, 
+                    dic=dic
+                )
+            
+            # init_conditions now contains the properly ordered initial values for all math:`y_i` variables
+    
+    Note: This example shows how to prepare initial conditions for a coherent state in quantum optics simulations.
+    The resulting init_conditions can be used directly with :obj:`scipy.integrate.odeint` or similar ODE solvers.
     """
     n=len(basis)
     ini = [0]*(2*n**2)
@@ -38,25 +72,34 @@ def InitialCondition(R, R0, basis, dic):
         ini[int(str(i).partition('y')[-1])] = tempdic[i]
     return ini
 
-def SubsSol(obs, sol):
-    """This function converts variable expressions to the time evolution
-    (obtained by odeint) of the corresponding observable. The input expression
-    is obs, while sol is the object returned by odeint, and b is the base
-    used in Qeq"""
+def SubsSol(sol, dic):
+    """This function converts symbolic variable expressions into their corresponding time evolution values obtained from an ODE solution.
+    It substitutes each symbolic variable in the input expression with its time series data from the ODE solution.
+    The function handles both single variables and complex expressions containing multiple variables. For each time point in the solution, it substitutes the 
+    variable values and evaluates the expression.
+
+    :param sol: The solution array returned by :obj:`scipy.integrate.odeint`.
+            Each column represents the time evolution of a variable (:math:`y0`, :math:`y1`, etc.), with rows corresponding to different time points.
+    :type sol: numpy.ndarray
+    :param dic: Dictionary object given by the :obj:`openket.Dictionary <openket.core.metrics.Dictionary>` function.
+    :type dic: dict
+    :return: A list containing the evaluated expression values at each time point. The length matches the number of time points in sol.
+    :rtype: list
+    """
     temp={}; L = []
-    if len(obs.args) == 0:
+    if len(dic.args) == 0:
         for count1 in range(len(sol)):
-            L.append(sol[:, int(str(obs).partition('y')[-1])][count1])
-            clear_cache()   #Limpia el cache para que no ocupe toda la memoria
+            L.append(sol[:, int(str(dic).partition('y')[-1])][count1])
+            clear_cache()
     else:
         for count1 in range(len(sol)):
-            List = obs.args
+            List = dic.args
             for count2 in List:
                 for count3 in count2.atoms(Symbol):
                     temp[count3] = sol[:, int(str(count3).partition('y')[-1])][count1]
-                    clear_cache()   #Limpia el cache para que no ocupe toda la memoria
-            L.append(obs.subs(temp))
-            clear_cache()   #Limpia el cache para que no ocupe toda la memoria
+                    clear_cache()
+            L.append(dic.subs(temp))
+            clear_cache()
     L=list(L)
     return L
 
@@ -67,7 +110,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
     This function creates a file called ``filename`` which defines a function
     in the sintaxis needed to feed `Scipy's ODE solver odeint <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_
     or `GSL's ODE solver gsl_odeiv2.h <https://www.gnu.org/software/gsl/doc/html/ode-initval.html>`_,
-    or just applies the :obj:`scipy.odeint` function with the given parameters.
+    or just applies the :obj:`scipy.integrate.odeint` function with the given parameters.
 
     :param R: Operator involved. The function turns it in terms of the basis ``basis``.
     :type R: :obj:`Operator`
@@ -79,19 +122,19 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
     :type y0: array, optional
     :param t: A sequence of time points for which to solve for :math:`y`, necessary if :code:`file=None`.
     :type t: array, optional
-    :param args: Extra arguments to pass to :obj:`scipy.odeint` function (see `documentation <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_).
+    :param args: Extra arguments to pass to :obj:`scipy.integrate.odeint` function (see `documentation <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_).
     :type args: tuple, optional
     :param options:
         * `file_suggestion` (boolean): True if the file created includes a basic code to run the GSL's ODE solver, only available if :code:`file="GSL"`.
-        * `h0` (float): The step size to be attempted on the first step, default at 1e-6 for :obj:`gsl_odeiv2.h` and 0.0 for :obj:`scipy.odeint`.
-        * `atol` (float): Absolute tolerance, default at 1e-6 for :obj:`gsl_odeiv2.h` and :code:`None` for :obj:`scipy.odeint`.
-        * `rtol` (float): Relative tolerance, default at 0.0 for :obj:`gsl_odeiv2.h` and :code:`None` for :obj:`scipy.odeint`.
-        * Other Parameters: Other :obj:`scipy.odeint` parameters (see `documentation <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_).
+        * `h0` (float): The step size to be attempted on the first step, default at 1e-6 for :obj:`gsl_odeiv2.h` and 0.0 for :obj:`scipy.integrate.odeint`.
+        * `atol` (float): Absolute tolerance, default at 1e-6 for :obj:`gsl_odeiv2.h` and :code:`None` for :obj:`scipy.integrate.odeint`.
+        * `rtol` (float): Relative tolerance, default at 0.0 for :obj:`gsl_odeiv2.h` and :code:`None` for :obj:`scipy.integrate.odeint`.
+        * Other Parameters: Other :obj:`scipy.integrate.odeint` parameters (see `documentation <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_).
     :type options: dict, optional
     :param file:
-        * :code:`file=None`: the function runs :obj:`scipy.odeint` with the given parameters.
+        * :code:`file=None`: the function runs :obj:`scipy.integrate.odeint` with the given parameters.
         * :code:`file="GSL"`: creates a C syntax file to :obj:`gsl_odeiv2.h` solver.
-        * :code:`file="Scipy"`: creates a Python syntax file to :obj:`scipy.odeint` solver.
+        * :code:`file="Scipy"`: creates a Python syntax file to :obj:`scipy.integrate.odeint` solver.
     :type file: string, optional
     :param filename: The name of the out file with the function.
     :type filename: string, optional
@@ -106,7 +149,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
             :math:`y` should be understood as a vector, which is defined entry-like as a list, and :math:`t` is the time variable.
             :math:`f` returns also a list, containig the expressions of the derivatives of each entry
             of :math:`y` as entries of another list. 
-            :obj:`scipy.odeint` and :obj:`gsl_odeiv2.h` understand this as a collection of coupled ODE to be solved, specifying
+            :obj:`scipy.integrate.odeint` and :obj:`gsl_odeiv2.h` understand this as a collection of coupled ODE to be solved, specifying
             an initial condition and the time step.
     :rtype: array or file
 

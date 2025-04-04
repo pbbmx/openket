@@ -1,7 +1,7 @@
 from sympy import Matrix, I, symbols, Add
-from diracobject import AdjointOperator, DiracSum, DiracMult, _evaluar, _expandir, _canonic_mult, _canonic_suma, _is_equal
-from diracobject import *
-from gates import *
+from .diracobject import Ket,Bra,Operator,AdjointOperator,DiracSum,DiracMult,_expandir
+
+__all__ = ['Adj','Commutator','TraceOut','Trace','Normalize','Qmatrix','Dictionary','Qch']
 
 def Adj(A):
     """

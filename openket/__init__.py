@@ -32,10 +32,7 @@ else:
     del scipy
 
 #Import modules
-from .core.diracobject import Ket, Bra, Operator, CreationOperator, AnnihilationOperator
-from .core.metrics import *
-from .core.gates import *
-from .core.evolution import *
+from .core import *
 
 
 # Startup message
