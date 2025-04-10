@@ -40,6 +40,7 @@
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'guide/guide-evolution';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -287,7 +288,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -303,6 +306,36 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-level-semiclassical-atom-dynamics">Two-Level Semiclassical Atom Dynamics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#code-implementation">Code implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#system-setup">1. System setup</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#master-equation">2. Master Equation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-conditions">3. Initial Conditions</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">4. Time Evolution</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">5. Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantum-harmonic-oscillator-with-dissipation">Quantum Harmonic Oscillator with Dissipation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Code implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#initialization">1. Initialization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-hamiltonian-and-master-equation-setup">2. Operators, Hamiltonian and Master Equation setup</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-state-coherent-state">3. Initial State: Coherent State</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. Time Evolution</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#expectation-values">5. Expectation Values</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting">6. Plotting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -318,6 +351,230 @@ document.write(`
 evolution. In quantum mechanics there are many ways of representing how a
 system evolves. In this section we will demonstrate the use of OpenKet subroutines
 to solve numerically this problem by considering first the Von Neumann equation,</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\dot{\rho} = -\frac{i}{\hbar} [\hat{H}, \rho]\]</div>
+</div></blockquote>
+<p>Numerically this is a set of coupled ODE’s (ordinary differential equations).
+The thing is, we have to find a way to write and name the variables to produce a
+script readable by an ODE’s solver, and OpenKet helps with this issue.</p>
+<p>The problems presented in this user guide are discrete level atoms in special situations.
+We face this type of problems by first writing <span class="math notranslate nohighlight">\(\hat{H}\)</span> as a sum of exterior
+products of elements of a base; then verifying the time evolution of the matrix
+elements of <span class="math notranslate nohighlight">\(\rho\)</span>, namely <span class="math notranslate nohighlight">\(\langle i | \rho | j \rangle\)</span>, considering
+them as variables.</p>
+<p>Note: It is convenient to end up with real coefifcients equations, due to the
+fact that not all ODE’s solvers work with complex numbers, and the point is to make
+this as transparent as possible.</p>
+<section id="two-level-semiclassical-atom-dynamics">
+<h2>Two-Level Semiclassical Atom Dynamics<a class="headerlink" href="#two-level-semiclassical-atom-dynamics" title="Link to this heading">#</a></h2>
+<p>This example models a two-level atom interacting with a classical electromagnetic field
+under the rotating wave approximation.</p>
+<p>We can describe the atom using a 2 element base, let this basis be {<span class="math notranslate nohighlight">\(|0 \rangle, |1 \rangle\)</span>},
+where the ground state is <span class="math notranslate nohighlight">\(|0 \rangle\)</span> and the excited state <span class="math notranslate nohighlight">\(|1 \rangle\)</span>
+Furthermore let the energy of the levels be <span class="math notranslate nohighlight">\(\hbar \omega_0\)</span> and <span class="math notranslate nohighlight">\(\hbar \omega_1\)</span>
+respectively. Now, the total Hamiltonian may be divided into two parts:
+the Hamiltonian of the unperturbed atom <span class="math notranslate nohighlight">\(\hat{H_0}\)</span>, and the interation part <span class="math notranslate nohighlight">\(\hat{V}\)</span>.
+These can be found to have the following form</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\begin{split}\hat{H_0} = \hbar \omega_0 |0 \rangle \langle 0| + \hbar \omega_1 |1 \rangle \langle 1| \\
+\hat{V} = g E(t) |0 \rangle \langle 1| + g* E(t) |1 \rangle \langle 0|\end{split}\]</div>
+</div></blockquote>
+<p>Where we have put <span class="math notranslate nohighlight">\(g = e \langle 0| \vec{r} |1 \rangle \cdot \vec{\epsilon}\)</span> and
+<span class="math notranslate nohighlight">\(\vec{E}(t) = |\vec{E}(t)|\vec{\epsilon} = E(t) \vec{\epsilon}\)</span> with <span class="math notranslate nohighlight">\(|\vec{\epsilon}| = 1\)</span>.
+We assume the field has the form <span class="math notranslate nohighlight">\(E(t) = A cos(\nu t)\)</span>. It is convenient to change to the interaction picture,
+and following the rotating wave approximation (RWA) we end up with the Hamiltonian</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\hat{H} = \hbar (\Omega |0 \rangle \langle 1| + \Omega^* |1 \rangle \langle 0|)\]</div>
+</div></blockquote>
+<p>Representing resonant coupling between states, and where <span class="math notranslate nohighlight">\(\Omega = \frac{gA}{2 \hbar}\)</span>.</p>
+<section id="code-implementation">
+<h3>Code implementation<a class="headerlink" href="#code-implementation" title="Link to this heading">#</a></h3>
+<section id="system-setup">
+<h4>1. System setup<a class="headerlink" href="#system-setup" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">omega</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># Omega = 1 (for simplicity)</span>
+<span class="n">h</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># Natural units</span>
+<span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>  <span class="c1"># Two-level basis</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="n">Operator</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span>  <span class="c1"># Density matrix</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="n">Bra</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">Adj</span><span class="p">(</span><span class="n">omega</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Bra</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># Hamiltonian</span>
+</pre></div>
+</div>
+</section>
+<section id="master-equation">
+<h4>2. Master Equation<a class="headerlink" href="#master-equation" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Liouville-von Neumann equation (no dissipation)</span>
+<span class="n">rdot</span> <span class="o">=</span> <span class="o">-</span><span class="n">I</span><span class="o">*</span><span class="n">Commutator</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">rho</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="initial-conditions">
+<h4>3. Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Initial state |0⟩⟨0|</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h4>4. Time Evolution<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<p>In this case, <a class="reference internal" href="../apidoc/functions.html#openket.core.evolution.Qeq" title="openket.core.evolution.Qeq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.Qeq</span></code></a> function provides the ODE’s solve using
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code> internally, skipping the steps of creating a function and the dictionary
+(which in this case do not need to be defined), providing the basis, the initial condition and the simulation time.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Simulation time, from 0s to 10s</span>
+<span class="n">solution</span> <span class="o">=</span> <span class="n">Qeq</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">Rdot</span><span class="o">=</span><span class="n">rdot</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">y0</span><span class="o">=</span><span class="n">y0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="visualization">
+<h4>5. Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">solution</span><span class="p">[:,</span><span class="mi">3</span><span class="p">])</span>  <span class="c1"># Plot ⟨1|R|1⟩ population</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Excited state population&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Rabi Oscillations in Two-Level System&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/two_level_system1.png"><img alt="../_images/two_level_system1.png" src="../_images/two_level_system1.png" style="width: 544.0px; height: 408.0px;" />
+</a>
+</figure>
+</section>
+</section>
+</section>
+<section id="quantum-harmonic-oscillator-with-dissipation">
+<h2>Quantum Harmonic Oscillator with Dissipation<a class="headerlink" href="#quantum-harmonic-oscillator-with-dissipation" title="Link to this heading">#</a></h2>
+<p>This example demonstrates the dynamics of a quantum harmonic oscillator coupled to a
+dissipative environment. We track the time evolution of the expectation values for:
+The number of photons <span class="math notranslate nohighlight">\(\langle \hat{N} \rangle\)</span>, the position <span class="math notranslate nohighlight">\(\langle \hat{X} \rangle\)</span>
+and the momentum <span class="math notranslate nohighlight">\(\langle \hat{P} \rangle\)</span>.</p>
+<p>The Hamiltonian of the system is <span class="math notranslate nohighlight">\(\hat{H} = \hbar \omega (\hat{a}^{\dagger} \hat{a} + \frac{1}{2})\)</span>,
+where <span class="math notranslate nohighlight">\(\hat{a}^{\dagger}\)</span> and <span class="math notranslate nohighlight">\(\hat{a}\)</span> are the creation and annihilation operators, and
+<span class="math notranslate nohighlight">\(\omega\)</span> is the oscillator frequency.</p>
+<p>The system evolves under the Lindblad master equation:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\dot{\rho} = -\frac{i}{\hbar} [\hat{H}, \rho] + \frac{\gamma}{2}(2 \hat{a} \rho \hat{a}^{\dagger} - \hat{a}^{\dagger} \hat{a} \rho - \rho \hat{a}^{\dagger} \hat{a})\]</div>
+</div></blockquote>
+<p>where <span class="math notranslate nohighlight">\(\gamma\)</span> is the photon decay rate.</p>
+<section id="id2">
+<h3>Code implementation<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="initialization">
+<h4>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hhbar</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># Natural units</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># Oscillator frecuency = 1 (for simplicity)</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># Photon decay rate</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># Particle mass = 1 (for simplicity)</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># Truncated Fock basis size</span>
+<span class="n">base</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;field&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="c1"># Basis states |0⟩ to |4⟩</span>
+</pre></div>
+</div>
+</section>
+<section id="operators-hamiltonian-and-master-equation-setup">
+<h4>2. Operators, Hamiltonian and Master Equation setup<a class="headerlink" href="#operators-hamiltonian-and-master-equation-setup" title="Link to this heading">#</a></h4>
+<p>Since OpenKet has already defined <a class="reference internal" href="../apidoc/classes.html#openket.core.diracobject.AnnihilationOperator" title="openket.core.diracobject.AnnihilationOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.Annihilation</span></code></a>
+and <a class="reference internal" href="../apidoc/classes.html#openket.core.diracobject.CreationOperator" title="openket.core.diracobject.CreationOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.Creation</span></code></a> operators,
+we just use them.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">AnnihilationOperator</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">aa</span> <span class="o">=</span> <span class="n">CreationOperator</span><span class="p">(</span><span class="s2">&quot;field&quot;</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="n">Operator</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">)</span> <span class="c1"># Density matrix</span>
+<span class="n">H</span> <span class="o">=</span> <span class="n">hbar</span><span class="o">*</span><span class="n">omega</span><span class="o">*</span><span class="p">(</span><span class="n">aa</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Hamiltonian</span>
+
+<span class="n">rdot</span> <span class="o">=</span> <span class="o">-</span><span class="n">sp</span><span class="o">.</span><span class="n">I</span><span class="o">/</span><span class="n">hbar</span> <span class="o">*</span> <span class="n">Commutator</span><span class="p">(</span><span class="n">H</span><span class="p">,</span><span class="n">rho</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">gamma</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">aa</span> <span class="o">-</span> <span class="n">aa</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">rho</span> <span class="o">-</span> <span class="n">rho</span><span class="o">*</span><span class="n">aa</span><span class="o">*</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="initial-state-coherent-state">
+<h4>3. Initial State: Coherent State<a class="headerlink" href="#initial-state-coherent-state" title="Link to this heading">#</a></h4>
+<p>A coherent state <span class="math notranslate nohighlight">\(| \alpha \rangle = e^{-\frac{|\alpha|^2}{2}} \sum_{n=0}^{\infty} \frac{\alpha^n}{\sqrt{n!}} |n \rangle\)</span>,
+with <span class="math notranslate nohighlight">\(\alpha = 1\)</span> (mean photon number <span class="math notranslate nohighlight">\(\langle \hat{N} \rangle (0)=1\)</span>)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">state_alpha</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">state_alpha</span> <span class="o">=</span> <span class="n">state_alpha</span> <span class="o">+</span> <span class="p">((</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">factorial</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> <span class="o">*</span> <span class="n">Ket</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;field&quot;</span><span class="p">)</span>
+<span class="n">state_alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">state_alpha</span>
+<span class="n">rho0</span> <span class="o">=</span> <span class="n">state_alpha</span> <span class="o">*</span> <span class="n">Adj</span><span class="p">(</span><span class="n">state_alpha</span><span class="p">)</span> <span class="c1"># Density matrix ρ(0) = |α⟩⟨α|</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h4>4. Time Evolution<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>The <a class="reference internal" href="../apidoc/functions.html#openket.core.evolution.Qeq" title="openket.core.evolution.Qeq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.Qeq</span></code></a> function provides the coupled ODE’s that must
+be solved to find the solution, solving the issue mentioned at the beginning of the chapter.
+Also, we are using the <a class="reference internal" href="../apidoc/functions.html#openket.core.evolution.InitialCondition" title="openket.core.evolution.InitialCondition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.InitialCondition</span></code></a>
+function to represent the coherent states, used as a initial conditions, as a list of values.
+Both are necessary to be fed into <code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.integrate.odeint</span></code>, or any other ODE’s solver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Qeq</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">Rdot</span><span class="o">=</span><span class="n">rdot</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="s2">&quot;Scipy&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;func&quot;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">func</span><span class="w"> </span><span class="kn">import</span> <span class="n">dic</span><span class="p">,</span><span class="n">f</span>
+<span class="n">init_conditions</span> <span class="o">=</span> <span class="n">InitialCondition</span><span class="p">(</span><span class="n">R</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">R0</span><span class="o">=</span><span class="n">rho0</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">base</span><span class="p">,</span> <span class="n">dic</span><span class="o">=</span><span class="n">dic</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">500</span><span class="p">)</span> <span class="c1"># Simulation time, from 0s to 50s</span>
+<span class="n">solution</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">init_conditions</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="expectation-values">
+<h4>5. Expectation Values<a class="headerlink" href="#expectation-values" title="Link to this heading">#</a></h4>
+<p>To compute <span class="math notranslate nohighlight">\(\langle \hat{N} \rangle\)</span>, <span class="math notranslate nohighlight">\(\langle \hat{X} \rangle\)</span> and
+<span class="math notranslate nohighlight">\(\langle \hat{P} \rangle\)</span>, we must define the <span class="math notranslate nohighlight">\(\hat{N}\)</span>, <span class="math notranslate nohighlight">\(\hat{X}\)</span>
+and <span class="math notranslate nohighlight">\(\hat{P}\)</span> operators, as:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\hat{N} = \hat{a}^{\dagger} \hat{a}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{X} = \sqrt{\frac{\hbar}{2 m \omega}} (\hat{a} + \hat{a}^{\dagger})\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\hat{P} = i \sqrt{\frac{\hbar m \omega}{2}} (\hat{a}^{\dagger} - \hat{a})\)</span></p></li>
+</ul>
+<p>Then, using the property <span class="math notranslate nohighlight">\(\langle \hat{A} \rangle = Tr[\rho \hat{A}]\)</span>,
+we can find the expression of the trace using <a class="reference internal" href="../apidoc/functions.html#openket.core.metrics.Trace" title="openket.core.metrics.Trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.Trace</span></code></a>
+in terms of the given basis, and then replace the <span class="math notranslate nohighlight">\(\langle i | R | j \rangle\)</span>
+objects with their corresponding variables <span class="math notranslate nohighlight">\(y^k\)</span>, using <a class="reference internal" href="../apidoc/functions.html#openket.core.metrics.Qch" title="openket.core.metrics.Qch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.Qch</span></code></a>.
+Now, with <a class="reference internal" href="../apidoc/functions.html#openket.core.evolution.SubsSol" title="openket.core.evolution.SubsSol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">openket.SubsSol</span></code></a>,
+we can find the correct numerical value in the density matrix with the correct position in the list.
+As each row of <code class="code docutils literal notranslate"><span class="pre">solution</span></code> corresponds to density matrix <span class="math notranslate nohighlight">\(\rho\)</span> at a given time,
+we get a list with the values at each time <span class="math notranslate nohighlight">\(t\)</span>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">N</span> <span class="o">=</span> <span class="n">aa</span> <span class="o">*</span> <span class="n">a</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">hbar</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="n">omega</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">aa</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">I</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">hbar</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="n">omega</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">aa</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span>
+
+<span class="n">N_symb</span> <span class="o">=</span> <span class="n">Qch</span><span class="p">(</span><span class="n">expr</span><span class="o">=</span><span class="n">Trace</span><span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">N</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">base</span><span class="p">),</span> <span class="n">dic</span><span class="o">=</span><span class="n">dic</span><span class="p">)</span>
+<span class="n">x_symb</span> <span class="o">=</span> <span class="n">Qch</span><span class="p">(</span><span class="n">expr</span><span class="o">=</span><span class="n">Trace</span><span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">base</span><span class="p">),</span> <span class="n">dic</span><span class="o">=</span><span class="n">dic</span><span class="p">)</span>
+<span class="n">p_symb</span> <span class="o">=</span> <span class="n">Qch</span><span class="p">(</span><span class="n">expr</span><span class="o">=</span><span class="n">Trace</span><span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">p</span><span class="p">,</span> <span class="n">basis</span><span class="o">=</span><span class="n">base</span><span class="p">),</span> <span class="n">dic</span><span class="o">=</span><span class="n">dic</span><span class="p">)</span>
+
+<span class="n">N_expect</span> <span class="o">=</span> <span class="n">SubsSol</span><span class="p">(</span><span class="n">sol</span><span class="o">=</span><span class="n">solution</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">N_symb</span><span class="p">)</span>
+<span class="n">x_expect</span> <span class="o">=</span> <span class="n">SubsSol</span><span class="p">(</span><span class="n">sol</span><span class="o">=</span><span class="n">solution</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">x_symb</span><span class="p">)</span>
+<span class="n">p_expect</span> <span class="o">=</span> <span class="n">SubsSol</span><span class="p">(</span><span class="n">sol</span><span class="o">=</span><span class="n">solution</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="n">p_symb</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="plotting">
+<h4>6. Plotting<a class="headerlink" href="#plotting" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Subplot 1: &lt;N&gt;</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">N_expect</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&lt;N&gt;&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Photon number&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Subplot 2: &lt;X&gt; and &lt;P&gt;</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x_expect</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&lt;X&gt;&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">p_expect</span><span class="p">,</span> <span class="s1">&#39;g--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;&lt;P&gt;&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Time (s)&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Expectation value&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Dynamics of a Dissipative Quantum Harmonic Oscillator&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="../_images/dissipative_QHO.png"><img alt="../_images/dissipative_QHO.png" src="../_images/dissipative_QHO.png" style="width: 850.0px; height: 680.0px;" />
+</a>
+</figure>
+</section>
+</section>
+</section>
 </section>
 
 
@@ -355,6 +612,43 @@ to solve numerically this problem by considering first the Von Neumann equation,
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-level-semiclassical-atom-dynamics">Two-Level Semiclassical Atom Dynamics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#code-implementation">Code implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#system-setup">1. System setup</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#master-equation">2. Master Equation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-conditions">3. Initial Conditions</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">4. Time Evolution</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">5. Visualization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quantum-harmonic-oscillator-with-dissipation">Quantum Harmonic Oscillator with Dissipation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Code implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#initialization">1. Initialization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#operators-hamiltonian-and-master-equation-setup">2. Operators, Hamiltonian and Master Equation setup</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-state-coherent-state">3. Initial State: Coherent State</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. Time Evolution</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#expectation-values">5. Expectation Values</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#plotting">6. Plotting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

@@ -1,4 +1,4 @@
-from sympy import Symbol, symbols, expand, I
+from sympy import Symbol, symbols, expand, I, N
 from sympy.core.cache import clear_cache
 from pylab import conjugate
 import re as regex
@@ -34,7 +34,7 @@ def InitialCondition(R, R0, basis, dic):
         .. code-block:: python
         
             >>> # Define parameters and basis
-            >>> n = 10  # Truncation level
+            >>> n = 5  # Truncation level
             >>> alpha = 1  # Coherent state amplitude
             >>> basis = [Ket(i,"field") for i in range(n)]  # Fock basis
             
@@ -52,8 +52,10 @@ def InitialCondition(R, R0, basis, dic):
                     basis=base, 
                     dic=dic
                 )
-            
+    
             # init_conditions now contains the properly ordered initial values for all math:`y_i` variables
+            >>> print(init_conditions)
+            [0.367879441171442, 0, 0.367879441171442, 0, 0.260130047511444, 0, 0.150186152955043, 0, 0.0750930764775213, 0, 0.367879441171442, 0, 0.367879441171442, 0, 0.260130047511444, 0, 0.150186152955043, 0, 0.0750930764775213, 0, 0.260130047511444, 0, 0.260130047511444, 0, 0.183939720585721, 0, 0.106197647194831, 0, 0.0530988235974153, 0, 0.150186152955043, 0, 0.150186152955043, 0, 0.106197647194831, 0, 0.0613132401952404, 0, 0.0306566200976202, 0, 0.0750930764775213, 0, 0.0750930764775213, 0, 0.0530988235974153, 0, 0.0306566200976202, 0, 0.0153283100488101, 0]
     
     Note: This example shows how to prepare initial conditions for a coherent state in quantum optics simulations.
     The resulting init_conditions can be used directly with :obj:`scipy.integrate.odeint` or similar ODE solvers.
@@ -72,7 +74,7 @@ def InitialCondition(R, R0, basis, dic):
         ini[int(str(i).partition('y')[-1])] = tempdic[i]
     return ini
 
-def SubsSol(sol, dic):
+def SubsSol(sol, var):
     """This function converts symbolic variable expressions into their corresponding time evolution values obtained from an ODE solution.
     It substitutes each symbolic variable in the input expression with its time series data from the ODE solution.
     The function handles both single variables and complex expressions containing multiple variables. For each time point in the solution, it substitutes the 
@@ -81,26 +83,25 @@ def SubsSol(sol, dic):
     :param sol: The solution array returned by :obj:`scipy.integrate.odeint`.
             Each column represents the time evolution of a variable (:math:`y0`, :math:`y1`, etc.), with rows corresponding to different time points.
     :type sol: numpy.ndarray
-    :param dic: Dictionary object given by the :obj:`openket.Dictionary <openket.core.metrics.Dictionary>` function.
-    :type dic: dict
-    :return: A list containing the evaluated expression values at each time point. The length matches the number of time points in sol.
+    :param var: symbolic expression of the form :math:`y^k`, given by :obj:`openket.Qch <openket.core.metrics.Qch>`.
+    :type var: sympy.expr
+    :return: A list containing the numerical evaluated expression values at each time point. The length matches the number of time points in ``sol``.
     :rtype: list
     """
     temp={}; L = []
-    if len(dic.args) == 0:
+    if len(var.args) == 0:
         for count1 in range(len(sol)):
-            L.append(sol[:, int(str(dic).partition('y')[-1])][count1])
+            L.append(sol[:, int(str(var).partition('y')[-1])][count1])
             clear_cache()
     else:
         for count1 in range(len(sol)):
-            List = dic.args
+            List = var.args
             for count2 in List:
                 for count3 in count2.atoms(Symbol):
-                    temp[count3] = sol[:, int(str(count3).partition('y')[-1])][count1]
+                    temp[count3] = sol[count1][int(str(count3).partition('y')[-1])]
                     clear_cache()
-            L.append(dic.subs(temp))
+            L.append(complex(N(var.subs(temp))))
             clear_cache()
-    L=list(L)
     return L
 
 def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filename="func", dictname="dic"):
@@ -156,33 +157,8 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
     Example
     ^^^^^^^^^
 
-    We will considerate the Two Level Semiclassical Atoms problem, when an atom interacts with an electromagnetic field.
-    We can describe the atom using a 2 element base, let this basis be {:math:`|0 \\rangle, |1 \\rangle`}.
-    Furthermore let the energy of the levels be :math:`\\hbar \\omega_0` and :math:`\\hbar \\omega_1` respectively.
-    Now, the total Hamiltonian may be divided into two parts: the Hamiltonian of the unperturbed atom :math:`\\hat{H_0}`,
-    and the interation part :math:`\\hat{V}`. These can be found to have the following form
-    
-        .. math::
-
-            \\hat{H_0} = \\hbar \\omega_0 |0 \\rangle \\langle 0| + \\hbar \\omega_1 |1 \\rangle \\langle 1| \\\\
-            \\hat{V} = g E(t) |0 \\rangle \\langle 1| + g* E(t) |1 \\rangle \\langle 0|
-    
-    Where we have put :math:`g = e \\langle 0| \\vec{r} |1 \\rangle \\cdot \\vec{\\epsilon}` and 
-    :math:`\\vec{E}(t) = |\\vec{E}(t)|\\vec{\\epsilon} = E(t) \\vec{\\epsilon}` with :math:`|\\vec{\\epsilon}| = 1`.
-    We assume the field has the form
-
-        .. math::
-
-            E(t) = A cos(\\nu t)
-
-    It is convenient to change to the interaction picture, and following the rotating wave approximation (RWA)
-    we end up with the Hamiltonian
-
-        .. math::
-
-            \\hat{H} = \\hbar (\\Omega |0 \\rangle \\langle 1| + \\Omega^* |1 \\rangle \\langle 0|)
-
-    Where :math:`\\Omega = \\frac{gA}{2 \\hbar}` and we assume :math:`\\Omega = 1` for simplicity.
+    Suppose we want to see the time evolution of the Hamiltonian :math:`\\hat{H} = \\hbar (\\Omega |0 \\rangle \\langle 1| + \\Omega^* |1 \\rangle \\langle 0|)`
+    (Two-Level Semiclassical Atom). We assume :math:`\\Omega = 1` for simplicity.
     Following is the script which numerically solves the time evolution of the system described.
 
         .. code-block:: python
@@ -210,7 +186,7 @@ def Qeq(R, Rdot, basis, y0=None, t=None, args=(), options={}, file=None, filenam
     (:code:`y[3]` corresponding to :math:`\\langle 1| \\rho |1 \\rangle`) in all the lists within `solution`.
     The graph we obtain is the following.
 
-    .. figure:: qeq-example.png
+    .. figure:: two_level_system.png
         :scale: 85 %
 
         Time evolution for :math:`\\langle 1| \\rho |1 \\rangle` with the initial condition :math:`\\rho_{t=0} = |0 \\rangle \\langle 0|`

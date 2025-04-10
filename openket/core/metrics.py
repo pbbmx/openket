@@ -225,16 +225,16 @@ def Dictionary(A, basis):
 
     """
     n = len(basis)
-    u = []
-    w = []
+    re = []
+    im = []
     t = []
     for i in range( n*n ):
-        u.append('Re%d' %i)
-        u[i] = symbols('Re%d' %i, real=True, each_char=False)
-        w.append('Im%d' %i)
-        w[i] = symbols('Im%d' %i, real=True, each_char=False)
-    for i in range(len(u)):
-        t.append(u[i] + I*w[i])
+        re.append('Re%d' %i)
+        re[i] = symbols('Re%d' %i, real=True, each_char=False)
+        im.append('Im%d' %i)
+        im[i] = symbols('Im%d' %i, real=True, each_char=False)
+    for i in range(len(re)):
+        t.append(re[i] + I*im[i])
     D = {}
     k = 0
     for i in range(n):
