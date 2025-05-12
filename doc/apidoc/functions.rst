@@ -9,42 +9,42 @@ Metrics on states or operators
 =================================================
 
 -------------------
-Adj
+dag
 -------------------
 
-.. autofunction:: openket.core.metrics.Adj
-
-
-
--------------------
-Normalize
--------------------
-
-.. autofunction:: openket.core.metrics.Normalize
+.. autofunction:: openket.core.metrics.dag
 
 
 
 -------------------
-Commutator
+normalize
 -------------------
 
-.. autofunction:: openket.core.metrics.Commutator
-
-
-
--------------------
-TraceOut
--------------------
-
-.. autofunction:: openket.core.metrics.TraceOut
+.. autofunction:: openket.core.metrics.normalize
 
 
 
 -------------------
-Trace
+comm
 -------------------
 
-.. autofunction:: openket.core.metrics.Trace
+.. autofunction:: openket.core.metrics.comm
+
+
+
+-------------------
+ptrace
+-------------------
+
+.. autofunction:: openket.core.metrics.ptrace
+
+
+
+-------------------
+trace
+-------------------
+
+.. autofunction:: openket.core.metrics.trace
 
 
 
@@ -64,10 +64,10 @@ Visualization
 =================================================
 
 -------------------
-Qmatrix
+qmatrix
 -------------------
 
-.. autofunction:: openket.core.metrics.Qmatrix
+.. autofunction:: openket.core.metrics.qmatrix
 
 
 
@@ -77,25 +77,33 @@ Time evolution
 =================================================
 
 -------------------
-InitialCondition
+init_state
 -------------------
 
-.. autofunction:: openket.core.evolution.InitialCondition
-
-
--------------------
-SubsSol
--------------------
-
-.. autofunction:: openket.core.evolution.SubsSol
-
+.. autofunction:: openket.core.evolution.init_state
 
 
 -------------------
-Qeq
+sym2num
 -------------------
 
-.. autofunction:: openket.core.evolution.Qeq
+.. autofunction:: openket.core.evolution.sym2num
+
+
+
+-------------------
+build_ode
+-------------------
+
+.. autofunction:: openket.core.evolution.build_ode
+
+
+
+-------------------
+gsl_main
+-------------------
+
+.. autofunction:: openket.core.evolution.gsl_main
 
 
 
@@ -105,14 +113,14 @@ Utility functions
 =================================================
 
 -------------------
-Dictionary
+op2dict
 -------------------
 
-.. autofunction:: openket.core.metrics.Dictionary
+.. autofunction:: openket.core.metrics.op2dict
 
 
 -------------------
-Qch
+sub_qexpr
 -------------------
 
-.. autofunction:: openket.core.metrics.Qch
+.. autofunction:: openket.core.metrics.sub_qexpr

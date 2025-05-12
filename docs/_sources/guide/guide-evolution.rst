@@ -20,7 +20,7 @@ script readable by an ODE's solver, and OpenKet helps with this issue.
 
 The problems presented in this user guide are discrete level atoms in special situations.
 We face this type of problems by first writing :math:`\hat{H}` as a sum of exterior
-products of elements of a base; then verifying the time evolution of the matrix
+products of elements of a basis; then verifying the time evolution of the matrix
 elements of :math:`\rho`, namely :math:`\langle i | \rho | j \rangle`, considering
 them as variables.
 
@@ -36,7 +36,7 @@ Two-Level Semiclassical Atom Dynamics
 This example models a two-level atom interacting with a classical electromagnetic field
 under the rotating wave approximation.
 
-We can describe the atom using a 2 element base, let this basis be {:math:`|0 \rangle, |1 \rangle`},
+We can describe the atom using a 2 element basis, let this basis be {:math:`|0 \rangle, |1 \rangle`},
 where the ground state is :math:`|0 \rangle` and the excited state :math:`|1 \rangle`
 Furthermore let the energy of the levels be :math:`\hbar \omega_0` and :math:`\hbar \omega_1`
 respectively. Now, the total Hamiltonian may be divided into two parts:
@@ -73,7 +73,7 @@ Code implementation
     h = 1. # Natural units
     basis = [Ket(0), Ket(1)]  # Two-level basis
     rho = Operator("R")  # Density matrix
-    H = h * (omega*Ket(0)*Bra(1) + Adj(omega)*Ket(1)*Bra(0))  # Hamiltonian
+    H = h * (omega*Ket(0)*Bra(1) + dag(omega)*Ket(1)*Bra(0))  # Hamiltonian
 
 ^^^^^^^^^^^^^^^^^^^^
 2. Master Equation
@@ -82,7 +82,7 @@ Code implementation
 .. testcode:: [basics]
 
     # Liouville-von Neumann equation (no dissipation)
-    rdot = -I*Commutator(H, rho)
+    rdot = -I*comm(H, rho)
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 3. Initial Conditions
@@ -96,14 +96,15 @@ Code implementation
 4. Time Evolution
 ^^^^^^^^^^^^^^^^^^^^
 
-In this case, :obj:`openket.Qeq <openket.core.evolution.Qeq>` function provides the ODE's solve using
+In this case, :obj:`openket.build_ode <openket.core.evolution.build_ode>` function provides the ODE's solve using
 :obj:`scipy.integrate.odeint` internally, skipping the steps of creating a function and the dictionary
-(which in this case do not need to be defined), providing the basis, the initial condition and the simulation time.
+(which in this case do not need to be defined), providing to the function the basis, the initial condition
+and the simulation time.
 
 .. testcode:: [basics]
 
     t = linspace(0,10,1000)  # Simulation time, from 0s to 10s
-    solution = Qeq(R=rho, Rdot=rdot, basis=base, y0=y0, t=t, file=None)
+    solution = build_ode(rho=rho, rdot=rdot, basis=basis, y0=y0, t=t, filetype=None)
 
 ^^^^^^^^^^^^^^^^^^^^
 5. Visualization
@@ -164,14 +165,14 @@ Code implementation
     m = 1 # Particle mass = 1 (for simplicity)
 
     n = 5 # Truncated Fock basis size
-    base = [Ket(i,"field") for i in range(n)] # Basis states |0⟩ to |4⟩
+    basis = [Ket(i,"field") for i in range(n)] # Basis states |0⟩ to |4⟩
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2. Operators, Hamiltonian and Master Equation setup
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Since OpenKet has already defined :obj:`openket.Annihilation <openket.core.diracobject.AnnihilationOperator>`
-and :obj:`openket.Creation <openket.core.diracobject.CreationOperator>` operators,
+Since OpenKet has already defined :obj:`openket.AnnihilationOperator <openket.core.diracobject.AnnihilationOperator>`
+and :obj:`openket.CreationOperator <openket.core.diracobject.CreationOperator>` operators,
 we just use them.
 
 .. testcode:: [basics]
@@ -181,7 +182,7 @@ we just use them.
     rho = Operator("R") # Density matrix
     H = hbar*omega*(aa*a + 1/2) # Hamiltonian
 
-    rdot = -sp.I/hbar * Commutator(H,rho) + (gamma/2)*(2*a*rho*aa - aa*a*rho - rho*aa*a)
+    rdot = -sp.I/hbar * comm(H,rho) + (gamma/2)*(2*a*rho*aa - aa*a*rho - rho*aa*a)
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 3. Initial State: Coherent State
@@ -197,29 +198,30 @@ with :math:`\alpha = 1` (mean photon number :math:`\langle \hat{N} \rangle (0)=1
     for i in range(n):
             state_alpha = state_alpha + ((alpha**2) / math.sqrt(math.factorial(i))) * Ket(i,"field")
     state_alpha = np.exp(-(np.abs(alpha)**2)/2) * state_alpha
-    rho0 = state_alpha * Adj(state_alpha) # Density matrix ρ(0) = |α⟩⟨α|
+    rho0 = state_alpha * dag(state_alpha) # Density matrix ρ(0) = |α⟩⟨α|
 
-^^^^^^^^^^^^^^^^^^^^
-4. Time Evolution
-^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+4. Time Evolution (Scipy's ODE solver)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :obj:`openket.Qeq <openket.core.evolution.Qeq>` function provides the coupled ODE's that must
-be solved to find the solution, solving the issue mentioned at the beginning of the chapter.
-Also, we are using the :obj:`openket.InitialCondition <openket.core.evolution.InitialCondition>`
+The :obj:`openket.build_ode <openket.core.evolution.build_ode>` function provides the coupled ODE's that must
+be solved to find the solution, solving the issue mentioned at the beginning of the chapter, not forgetting that since
+we want to use Scipy's ODE solver, we must specify :code:`filetype="Scipy"`.
+Also, we are using the :obj:`openket.init_state <openket.core.evolution.init_state>`
 function to represent the coherent states, used as a initial conditions, as a list of values.
 Both are necessary to be fed into :obj:`scipy.integrate.odeint`, or any other ODE's solver.
 
 .. testcode:: [basics]
 
-    Qeq(R=rho, Rdot=rdot, basis=base, file="Scipy", filename="func")
+    build_ode(rho=rho, rdot=rdot, basis=basis, filetype="Scipy", filename="func.py")
     from func import dic,f
-    init_conditions = InitialCondition(R=rho, R0=rho0, basis=base, dic=dic)
+    init_conditions = init_state(rho=rho, rho0=rho0, basis=basis, dic=dic)
     t = np.linspace(0,50,500) # Simulation time, from 0s to 50s
     solution = odeint(f, init_conditions, t)
 
-^^^^^^^^^^^^^^^^^^^^^^^^^
-5. Expectation Values
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5. Expectation Values (Scipy's ODE solver)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To compute :math:`\langle \hat{N} \rangle`, :math:`\langle \hat{X} \rangle` and
 :math:`\langle \hat{P} \rangle`, we must define the :math:`\hat{N}`, :math:`\hat{X}`
@@ -230,10 +232,10 @@ and :math:`\hat{P}` operators, as:
 * :math:`\hat{P} = i \sqrt{\frac{\hbar m \omega}{2}} (\hat{a}^{\dagger} - \hat{a})`
 
 Then, using the property :math:`\langle \hat{A} \rangle = Tr[\rho \hat{A}]`,
-we can find the expression of the trace using :obj:`openket.Trace <openket.core.metrics.Trace>`
+we can find the expression of the trace using :obj:`openket.trace <openket.core.metrics.trace>`
 in terms of the given basis, and then replace the :math:`\langle i | R | j \rangle`
-objects with their corresponding variables :math:`y^k`, using :obj:`openket.Qch <openket.core.metrics.Qch>`.
-Now, with :obj:`openket.SubsSol <openket.core.evolution.SubsSol>`,
+objects with their corresponding variables :math:`y^k`, using :obj:`openket.sub_qexpr <openket.core.metrics.sub_qexpr>`.
+Now, with :obj:`openket.sym2num <openket.core.evolution.sym2num>`,
 we can find the correct numerical value in the density matrix with the correct position in the list.
 As each row of :code:`solution` corresponds to density matrix :math:`\rho` at a given time,
 we get a list with the values at each time :math:`t`.
@@ -244,16 +246,75 @@ we get a list with the values at each time :math:`t`.
     x = np.sqrt(hbar/(2*m*omega)) * (a + aa)
     p = sp.I * np.sqrt(hbar*m*omega/2) * (aa - a)
 
-    N_symb = Qch(expr=Trace(rho * N, basis=base), dic=dic)
-    x_symb = Qch(expr=Trace(rho * x, basis=base), dic=dic)
-    p_symb = Qch(expr=Trace(rho * p, basis=base), dic=dic)
+    N_symb = sub_qexpr(qexpr=trace(rho * N, basis=basis), dic=dic)
+    x_symb = sub_qexpr(qexpr=trace(rho * x, basis=basis), dic=dic)
+    p_symb = sub_qexpr(qexpr=trace(rho * p, basis=basis), dic=dic)
 
-    N_expect = SubsSol(sol=solution, var=N_symb)
-    x_expect = SubsSol(sol=solution, var=x_symb)
-    p_expect = SubsSol(sol=solution, var=p_symb)
+    N_expect = sym2num(sol=solution, symbexpr=N_symb)
+    x_expect = sym2num(sol=solution, symbexpr=x_symb)
+    p_expect = sym2num(sol=solution, symbexpr=p_symb)
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+6. Time Evolution and Expectation Values (GSL's ODE solver)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Again, the :obj:`openket.build_ode <openket.core.evolution.build_ode>` function provides the coupled ODE's that must
+be solved to find the solution, but this time in C code written in another file.
+As before, we are using the :obj:`openket.init_state <openket.core.evolution.init_state>`
+function to represent the coherent states (initial conditions) as a list of values, but now
+we must set :code:`filetype="GSL"`.
+
+.. testcode:: [basics]
+
+    filename = "gslode.c"
+    build_ode(rho=rho, rdot=rdot, basis=base, filetype="GSL", filename=filename)
+    from dic import dic
+    init_conditions = init_state(rho=rho, rho0=rho0, basis=base, dic=dic)
+    t0 = 0, t1 = 50, step = 500
+    t = np.linspace(t0,t1,step)
+
+
+We define the :math:`\hat{N}`, :math:`\hat{X}` and :math:`\hat{P}` operators and now we have all the elements
+to feed :obj:`openket.gsl_main <openket.core.evolution.gsl_main>` function, obtaining a C file named `"gslode_main.c"`.
+
+.. testcode:: [basics]
+
+    N = aa * a
+    x = np.sqrt(hbar/(2*m*omega)) * (a + aa)
+    p = I * np.sqrt(hbar*m*omega/2) * (aa - a)
+
+    N_symb = sub_qexpr(qexpr=trace(rho * N, basis=base), dic=dic)
+    x_symb = sub_qexpr(qexpr=trace(rho * x, basis=base), dic=dic)
+    p_symb = sub_qexpr(qexpr=trace(rho * p, basis=base), dic=dic)
+
+    gsl_main(odefile=filename,
+        outfile="gslode_main.c",
+        y0=init_conditions,
+        tspan=(t0,t1),
+        step=step,
+        symbexprs=[N_symb,x_symb,p_symb],
+        options={ "output_format": "hdf5" })
+
+To compile the C code, we simply type in the terminal
+
+.. code-block:: bash
+
+    gcc gslode_main.c -lgsl -lgslcblas -lhdf5 -lm
+    ./a.out
+
+
+And we obtain a dataset with HDF5 format (in this case) that we can read with the following lines:
+
+.. testcode:: [basics]
+
+    with h5py.File('dset.h5', 'r') as f:
+        N_expect = f['dset'][:,0]
+        x_expect = f['dset'][:,1]
+        p_expect = f['dset'][:,2]
 
 ^^^^^^^^^^^^^^^
-6. Plotting
+7. Plotting
 ^^^^^^^^^^^^^^^
 
 .. testcode:: [basics]

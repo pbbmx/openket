@@ -348,14 +348,14 @@ Also, we will present special basic operators and states, and how they work.</p>
 <section id="hermitian-conjugate">
 <h3>Hermitian Conjugate<a class="headerlink" href="#hermitian-conjugate" title="Link to this heading">#</a></h3>
 <p>OpenKet is able to calculate the hermitian conjugate of the argument you input, be it a number,
-a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code>, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Bra</span></code>, an <code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code> or a combination of them, using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Adj</span></code> function.
+a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Ket</span></code>, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Bra</span></code>, an <code class="xref py py-obj docutils literal notranslate"><span class="pre">Operator</span></code> or a combination of them, using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">dag</span></code> function.
 For example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Definition of bras and kets</span>
 <span class="n">n</span> <span class="o">=</span> <span class="n">var</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">)</span>
 <span class="n">ket_n</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="n">n</span><span class="p">);</span> <span class="n">bra_n</span> <span class="o">=</span> <span class="n">Bra</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="c1">#Adj</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(I|n&gt;)⁺ =&quot;</span><span class="p">,</span><span class="n">Adj</span><span class="p">(</span><span class="n">ket_n</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(-I&lt;n|)⁺ =&quot;</span><span class="p">,</span><span class="n">Adj</span><span class="p">(</span><span class="o">-</span><span class="n">sp</span><span class="o">.</span><span class="n">I</span><span class="o">*</span><span class="n">bra_n</span><span class="p">))</span>
+<span class="c1">#Adjoint</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(I|n&gt;)⁺ =&quot;</span><span class="p">,</span><span class="n">dag</span><span class="p">(</span><span class="n">ket_n</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(-I&lt;n|)⁺ =&quot;</span><span class="p">,</span><span class="n">dag</span><span class="p">(</span><span class="o">-</span><span class="n">sp</span><span class="o">.</span><span class="n">I</span><span class="o">*</span><span class="n">bra_n</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><strong>Output</strong>:</p>
@@ -367,13 +367,13 @@ For example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Definition of the state</span>
 <span class="n">psi</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We define the state |psi&gt; = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="p">)</span>
-<span class="c1">#Adj</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|psi&gt;⁺ = &lt;psi| = &quot;</span><span class="p">,</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span>
+<span class="c1">#Adjoint</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|psi&gt;⁺ = &lt;psi| = &quot;</span><span class="p">,</span><span class="n">dag</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span>
 <span class="c1">#Norm</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;psi|psi&gt; = &quot;</span><span class="p">,</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt;psi|psi&gt; = &quot;</span><span class="p">,</span><span class="n">dag</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span><span class="p">)</span>
 <span class="c1">#Density operator</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rho = |psi&gt;&lt;psi|/2 = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;|psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="o">*</span><span class="n">dag</span><span class="p">(</span><span class="n">psi</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rho = |psi&gt;&lt;psi|/2 = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="o">*</span><span class="n">dag</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">dag</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span><span class="o">*</span><span class="n">psi</span><span class="p">)))</span>
 </pre></div>
 </div>
 <p><strong>Output</strong>:</p>
@@ -388,18 +388,18 @@ rho = |psi&gt;&lt;psi|/2 = (1/2)|0&gt;&lt;0| + (1/2)|0&gt;&lt;1| + (1/2)|1&gt;&l
 <section id="trace-and-partial-trace">
 <h3>Trace and Partial Trace<a class="headerlink" href="#trace-and-partial-trace" title="Link to this heading">#</a></h3>
 <p>OpenKet allows us to trace or partially trace states expressed as a sum of exterior
-products. Let’s first look into <code class="xref py py-obj docutils literal notranslate"><span class="pre">TraceOut</span></code>. This has 2 arguments: the first one is
+products. Let’s first look into <code class="xref py py-obj docutils literal notranslate"><span class="pre">ptrace</span></code>. This has 2 arguments: the first one is
 the total expression and the second one is the operator tag of the space you will
 be tracing out.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#State definition in two spaces</span>
 <span class="n">psi</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;psi = |00&gt; + |11&gt; = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="p">)</span>
 <span class="c1">#Proyector operator</span>
-<span class="n">P_psi</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+<span class="n">P_psi</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">dag</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P_|psi&gt; = |psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">P_psi</span><span class="p">)</span>
-<span class="c1">#TraceOut</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace of P_|psi&gt; in H1 space: &quot;</span><span class="p">,</span><span class="n">TraceOut</span><span class="p">(</span><span class="n">P_psi</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace of P_|psi&gt; in H2 space: &quot;</span><span class="p">,</span><span class="n">TraceOut</span><span class="p">(</span><span class="n">P_psi</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">))</span>
+<span class="c1">#Partial trace</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace of P_|psi&gt; in H1 space: &quot;</span><span class="p">,</span><span class="n">ptrace</span><span class="p">(</span><span class="n">P_psi</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace of P_|psi&gt; in H2 space: &quot;</span><span class="p">,</span><span class="n">ptrace</span><span class="p">(</span><span class="n">P_psi</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><strong>Output</strong>:</p>
@@ -409,22 +409,22 @@ Trace of P_|psi&gt; in H1 space: |0_H2&gt;&lt;0_H2| + |1_H2&gt;&lt;1_H2|
 Trace of P_|psi&gt; in H2 space: |0_H1&gt;&lt;0_H1| + |1_H1&gt;&lt;1_H1|
 </pre></div>
 </div>
-<p>The total trace is done with the function <code class="xref py py-obj docutils literal notranslate"><span class="pre">Trace</span></code>. You only need to input the
-total expression, <cite>Trace</cite> first finds all the operator tags and will then partially trace
+<p>The total trace is done with the function <code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code>. You only need to input the
+total expression, <cite>trace</cite> first finds all the operator tags and will then partially trace
 them all out.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#State definition in one space</span>
 <span class="n">eta</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;eta = &quot;</span><span class="p">,</span><span class="n">eta</span><span class="p">)</span>
-<span class="n">P_eta</span> <span class="o">=</span> <span class="n">eta</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
+<span class="n">P_eta</span> <span class="o">=</span> <span class="n">eta</span><span class="o">*</span><span class="n">dag</span><span class="p">(</span><span class="n">eta</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P_|eta&gt; = |eta&gt;&lt;eta| = &quot;</span><span class="p">,</span><span class="n">P_eta</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total trace of P_|eta&gt;: &quot;</span><span class="p">,</span><span class="n">Trace</span><span class="p">(</span><span class="n">P_eta</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total trace of P_|eta&gt;: &quot;</span><span class="p">,</span><span class="n">trace</span><span class="p">(</span><span class="n">P_eta</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">()</span>
 <span class="c1">#State definition in two spaces</span>
 <span class="n">psi</span> <span class="o">=</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;H1&quot;</span><span class="p">)</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;H2&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;psi = |00&gt; + |11&gt; = &quot;</span><span class="p">,</span><span class="n">psi</span><span class="p">)</span>
-<span class="n">P_psi</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+<span class="n">P_psi</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">dag</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P_|psi&gt; = |psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">P_psi</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total trace of P_|psi&gt;: &quot;</span><span class="p">,</span><span class="n">Trace</span><span class="p">(</span><span class="n">P_psi</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total trace of P_|psi&gt;: &quot;</span><span class="p">,</span><span class="n">trace</span><span class="p">(</span><span class="n">P_psi</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><strong>Output</strong>:</p>
@@ -445,7 +445,7 @@ total trace.</p>
 have the state <span class="math notranslate nohighlight">\(\rho_2 = 0.25|0 \rangle \langle 0| + 0.75|1 \rangle \langle 1|\)</span>.
 First we input this states,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">psi</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<span class="n">R1</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">Adj</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+<span class="n">R1</span> <span class="o">=</span> <span class="n">psi</span><span class="o">*</span><span class="n">dag</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
 <span class="n">R2</span> <span class="o">=</span> <span class="mf">0.25</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="n">Bra</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.75</span><span class="o">*</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">Bra</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -453,16 +453,16 @@ First we input this states,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;R1 = |psi&gt;&lt;psi| = &quot;</span><span class="p">,</span><span class="n">R1</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;R2 = &quot;</span><span class="p">,</span><span class="n">R2</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace(R1*R1) = &quot;</span><span class="p">,</span><span class="n">Trace</span><span class="p">(</span><span class="n">R1</span><span class="o">*</span><span class="n">R1</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace(R2*R2) = &quot;</span><span class="p">,</span><span class="n">Trace</span><span class="p">(</span><span class="n">R2</span><span class="o">*</span><span class="n">R2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;trace(R1*R1) = &quot;</span><span class="p">,</span><span class="n">trace</span><span class="p">(</span><span class="n">R1</span><span class="o">*</span><span class="n">R1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;trace(R2*R2) = &quot;</span><span class="p">,</span><span class="n">trace</span><span class="p">(</span><span class="n">R2</span><span class="o">*</span><span class="n">R2</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><strong>Output</strong>:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>R1 = |psi&gt;&lt;psi| = 0.5|0&gt;&lt;0| - 0.5|0&gt;&lt;1| - 0.5|1&gt;&lt;0| + 0.5|1&gt;&lt;1|
 R2 = 0.25|0&gt;&lt;0| + 0.75|1&gt;&lt;1|
 
-Trace(R1*R1) = 1
-Trace(R2*R2) = 0.625
+trace(R1*R1) = 1
+trace(R2*R2) = 0.625
 </pre></div>
 </div>
 <p>This concluding that R2 is not a pure state.</p>
@@ -470,21 +470,21 @@ Trace(R2*R2) = 0.625
 <section id="matrix-representation">
 <h3>Matrix Representation<a class="headerlink" href="#matrix-representation" title="Link to this heading">#</a></h3>
 <p>We are able nonetheless to work with the matrix representation of operators. This
-is done via <code class="xref py py-obj docutils literal notranslate"><span class="pre">Qmatrix</span></code>. The function has 2 arguments, the first is the expression
-(sum of exterior products) and the second is the base in list form.
+is done via <code class="xref py py-obj docutils literal notranslate"><span class="pre">qmatrix</span></code>. The function has 2 arguments, the first is the expression
+(sum of exterior products) and the second is the basis in list form.
 For example, let’s obtain the matrix representation of <span class="math notranslate nohighlight">\(\sigma_x\)</span> in the computational
 basis <span class="math notranslate nohighlight">\(\{|0 \rangle, |1 \rangle \}\)</span> and <span class="math notranslate nohighlight">\(\{|+ \rangle, |- \rangle \}\)</span>,
 where <span class="math notranslate nohighlight">\(|\pm \rangle = (|0 \rangle \pm |1 \rangle)/ \sqrt{2}\)</span>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">basis1</span> <span class="o">=</span>  <span class="p">[</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
 <span class="n">basis2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="p">(</span><span class="n">Ket</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="n">Ket</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Qmatrix on basis {|0&gt;,|1&gt;}: &quot;</span><span class="p">,</span><span class="n">Qmatrix</span><span class="p">(</span><span class="n">X</span><span class="p">(),</span> <span class="n">base1</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Qmatrix on basis {|+&gt;,|-&gt;}: &quot;</span><span class="p">,</span><span class="n">Qmatrix</span><span class="p">(</span><span class="n">X</span><span class="p">(),</span> <span class="n">base2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;qmatrix on basis {|0&gt;,|1&gt;}: &quot;</span><span class="p">,</span><span class="n">qmatrix</span><span class="p">(</span><span class="n">X</span><span class="p">(),</span> <span class="n">basis1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;qmatrix on basis {|+&gt;,|-&gt;}: &quot;</span><span class="p">,</span><span class="n">qmatrix</span><span class="p">(</span><span class="n">X</span><span class="p">(),</span> <span class="n">basis2</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><strong>Output</strong>:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Qmatrix on basis {|0&gt;,|1&gt;}: Matrix([[0, 1], [1, 0]])
-Qmatrix on basis {|+&gt;,|-&gt;}: Matrix([[1, 0], [0, -1]])
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>qmatrix on basis {|0&gt;,|1&gt;}: Matrix([[0, 1], [1, 0]])
+qmatrix on basis {|+&gt;,|-&gt;}: Matrix([[1, 0], [0, -1]])
 </pre></div>
 </div>
 </section>

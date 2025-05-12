@@ -12,47 +12,47 @@ class DiracObject(object):
     def __init__(self):
         pass
     def __add__(self, other):
-        return _evaluar(DiracSum(self, other))
+        return _evaluar(_DiracSum(self, other))
     def __radd__(self, other):
-        return _evaluar(DiracSum(other, self))
+        return _evaluar(_DiracSum(other, self))
     def __sub__(self, other):
-        return _evaluar(DiracSum(self, DiracMult(-1, other)))
+        return _evaluar(_DiracSum(self, _DiracMult(-1, other)))
     def __rsub__(self, other):
-        return _evaluar(DiracSum(other, DiracMult(-1, self)))
+        return _evaluar(_DiracSum(other, _DiracMult(-1, self)))
     def __mul__(self, other):
-        if isinstance(self, DiracMult):
-            if isinstance(other, DiracMult):
-                return _evaluar(DiracMult(self.coef*other.coef, *self.factors \
+        if isinstance(self, _DiracMult):
+            if isinstance(other, _DiracMult):
+                return _evaluar(_DiracMult(self.coef*other.coef, *self.factors \
                                     + other.factors))
             else:
-                return _evaluar(DiracMult(self.coef, *self.factors + [other]))
+                return _evaluar(_DiracMult(self.coef, *self.factors + [other]))
         else:
-            if isinstance(other, DiracMult):
-                return _evaluar(DiracMult(other.coef, *[self] + other.factors))
+            if isinstance(other, _DiracMult):
+                return _evaluar(_DiracMult(other.coef, *[self] + other.factors))
             else:
-                return _evaluar(DiracMult(1, self, other))
+                return _evaluar(_DiracMult(1, self, other))
     def __rmul__(self, other):
-        if isinstance(self, DiracMult):
-            if isinstance(other, DiracMult):
-                return _evaluar(DiracMult(other.coef*self.coef, *other.factors \
+        if isinstance(self, _DiracMult):
+            if isinstance(other, _DiracMult):
+                return _evaluar(_DiracMult(other.coef*self.coef, *other.factors \
                                     + self.factors))
             else:
-                return _evaluar(DiracMult(self.coef, *[other] + self.factors))
+                return _evaluar(_DiracMult(self.coef, *[other] + self.factors))
         else:
-            if isinstance(other, DiracMult):
-                return _evaluar(DiracMult(other.coef, *other.factors + [self]))
+            if isinstance(other, _DiracMult):
+                return _evaluar(_DiracMult(other.coef, *other.factors + [self]))
             else:
-                return _evaluar(DiracMult(1, other, self))
+                return _evaluar(_DiracMult(1, other, self))
     def __div__(self, other):
-        if isinstance(self, DiracMult):
-            return _evaluar(DiracMult(self.coef/other, *self.factors))
+        if isinstance(self, _DiracMult):
+            return _evaluar(_DiracMult(self.coef/other, *self.factors))
         else:
-            return _evaluar(DiracMult(Add(1)/other, self))
+            return _evaluar(_DiracMult(Add(1)/other, self))
     def __pow__(self, n):
         L = []
         for k in range(n):
             L.append(self)
-        return _evaluar(DiracMult(1, *L))
+        return _evaluar(_DiracMult(1, *L))
     
 class Ket(DiracObject):
     """
@@ -233,33 +233,27 @@ class AnnihilationOperator(DiracObject):
             return 'a(' + str(self.op) + ')'
 
 
-#hace falta revisar si son locales o para el usuario
-class DiracSum(DiracObject):
+#private classes and functions
+class _DiracSum(DiracObject):
     """This class represents the sum of several elements, which
     can be kets, bras, operators, dual operators, numbers, sums
     and 'multiplications', and stores them in a list."""
     def __init__(self, *terms):
         self.terms = list(terms)
         for term in self.terms:
-            if isinstance(term, DiracSum):
+            if isinstance(term, _DiracSum):
                 n = self.terms.index(term)
                 self.terms[n:n+1] = term.terms
     def __repr__(self):
         s = str(self.terms[0])
         for term in self.terms[1:]:
-            # if isinstance(term, DiracMult):                    #It is not longer needed
-            #     if sorted(list(term.coef.atoms()))[0] < 0:     #to correctly display the sum as sympy changed 
-            #         s += str(term)
-            #     else:
-            #         s += ' + ' + str(term)
-            # else:
-                s += ' + ' + str(term)
+            s += ' + ' + str(term)
         return s
 
-class DiracMult(DiracObject):
+class _DiracMult(DiracObject):
     """This class represents the 'multiplication' of any number of
     elements, which can be kets, bras, operators, dual operators,
-    scalars, sums (DiracSum) and even other 'multiplications' (DiracMult),
+    scalars, sums (_DiracSum) and even other 'multiplications' (_DiracMult),
     and stores them in a list. This 'multiplication' can have different
     meanings depending on the arguments: inner product, outer product,
     tensor product, application of operators, or plain multiplication.
@@ -272,7 +266,7 @@ class DiracMult(DiracObject):
         self.coef = Add(coefficient)
         self.factors = list(factors)
         for factor in self.factors:
-            if isinstance(factor, DiracMult):
+            if isinstance(factor, _DiracMult):
                 self.coef = self.coef*factor.coef
                 n = self.factors.index(factor)
                 self.factors[n:n+1] = factor.factors
@@ -317,13 +311,12 @@ class DiracMult(DiracObject):
                         n = n + 1
         return s
 
-
 def _evaluar(expression):
-    """This function evaluates any expression, be it a sum (class DiracSum),
-    a 'multiplication' (class DiracMult), or simple objects such as kets (in this
+    """This function evaluates any expression, be it a sum (class _DiracSum),
+    a 'multiplication' (class _DiracMult), or simple objects such as kets (in this
     case the function returns the object without changes). It basically
     works the following way: it first expands the expression by means of the
-    function expandir, which always returns a sum object (DiracSum), even
+    function expandir, which always returns a sum object (_DiracSum), even
     if it has only one element. The function then operates on each term,
     performing inner products and applying operators
     when possible. Afterwards, each term is sorted into the
@@ -336,10 +329,10 @@ def _evaluar(expression):
     """The expression is now a single sum of terms, none of which can be
     expanded further. Next, each term is turned into a 'multiplication'."""
     for n in range(len(expression.terms)):
-        if isinstance(expression.terms[n], DiracMult):
+        if isinstance(expression.terms[n], _DiracMult):
             pass
         else:
-            expression.terms[n] = DiracMult(1, expression.terms[n])
+            expression.terms[n] = _DiracMult(1, expression.terms[n])
     # Now each term is evaluated:
     for term in expression.terms:
         for n in range(len(term.factors)):
@@ -486,11 +479,11 @@ def _evaluar(expression):
     """Now, when two terms are 'equal', as determined by the function
     is_equal, the first one is replaced by their addition and the second
     one is labeled as 'out', to be removed later. Note that all terms
-    of expression belong to the class DiracMult."""
+    of expression belong to the class _DiracMult."""
     for n in range(len(expression.terms)):
         for m in range(n+1, len(expression.terms)):
             if _is_equal(expression.terms[n], expression.terms[m]):
-                expression.terms[n] = DiracMult(expression.terms[n].coef + \
+                expression.terms[n] = _DiracMult(expression.terms[n].coef + \
                                 expression.terms[m].coef, *expression.terms[n].factors)
                 expression.terms[m] = 'out'
     # Remove terms labeled as 'out':
@@ -504,26 +497,25 @@ def _evaluar(expression):
     while 'out' in expression.terms:
         expression.terms.remove('out')
     """Presently, expression consists of a sum of expanded and simplified
-    terms, all of them of type DiracMult. Some of them consist of an empty DiracMult
+    terms, all of them of type _DiracMult. Some of them consist of an empty _DiracMult
     (empty list) with some non-zero coefficient. These terms are assigned
-    the value of their coefficient (they will no longer belong to the DiracMult
+    the value of their coefficient (they will no longer belong to the _DiracMult
     class)."""
     for n in range(len(expression.terms)):
         if len(expression.terms[n].factors) == 0:
             expression.terms[n] = expression.terms[n].coef
-    """The expression consists of a sum of DiracMult objects and 'numbers' (i.e.,
-    anything which is not a Ket, Bra, Operator, AdjointOperator, DiracMult or DiracSum), and it is
+    """The expression consists of a sum of _DiracMult objects and 'numbers' (i.e.,
+    anything which is not a Ket, Bra, Operator, AdjointOperator, _DiracMult or _DiracSum), and it is
     finally passed to the function _canonic_suma, to order the items in a
     consistent way."""
     expression = _canonic_suma(expression)
     return expression
 
-
 def _expandir(expression):
     """This function completely expands an expression by repeatedly
     applying the distributive rule. It always returns a sum object
-    (DiracSum)."""
-    if isinstance(expression, DiracSum):
+    (_DiracSum)."""
+    if isinstance(expression, _DiracSum):
         nested = True
         while nested:
             n = 0; nmax = len(expression.terms)
@@ -531,14 +523,14 @@ def _expandir(expression):
                 if n == nmax:
                     nested = False
                     break
-                if isinstance(expression.terms[n], DiracMult):
+                if isinstance(expression.terms[n], _DiracMult):
                     k = 0; kmax = len(expression.terms[n].factors)
                     while k < kmax:
-                        if isinstance(expression.terms[n].factors[k], DiracSum):
+                        if isinstance(expression.terms[n].factors[k], _DiracSum):
                             L = []
                             for term in expression.terms[n].factors[k].terms:
-                                L.append(DiracMult(expression.terms[n].coef, *expression.terms[n].factors[:k] + [term] + expression.terms[n].factors[k+1:]))
-                            expression = DiracSum(*expression.terms[:n] + L + expression.terms[n+1:])
+                                L.append(_DiracMult(expression.terms[n].coef, *expression.terms[n].factors[:k] + [term] + expression.terms[n].factors[k+1:]))
+                            expression = _DiracSum(*expression.terms[:n] + L + expression.terms[n+1:])
                             k = kmax; n = nmax
                         else:
                             k = k + 1
@@ -546,11 +538,10 @@ def _expandir(expression):
                 else:
                     n = n + 1
         return expression
-    elif isinstance(expression, DiracMult):
-        return _expandir(DiracSum(expression))
+    elif isinstance(expression, _DiracMult):
+        return _expandir(_DiracSum(expression))
     else:
-        return DiracSum(expression)
-
+        return _DiracSum(expression)
 
 def _canonic_mult(term):
     """This function sorts the elements of a "multiplication" into
@@ -613,19 +604,18 @@ isinstance(u, CreationOperator) or isinstance(u, AnnihilationOperator)):
                     #print 'An exception occurred.'
                     #raise
 
-    term = DiracMult(term.coef, *L)
+    term = _DiracMult(term.coef, *L)
     return term
-
 
 def _canonic_suma(expression):
     """This function sorts the terms of a sum into the 'canonic form',
     which is similar to that of the 'multiplication'. The expression
     passed by the function evaluar consists of a sum of non-expandable,
-    simplified terms, all of them either 'multiplication' objects (DiracMult),
+    simplified terms, all of them either 'multiplication' objects (_DiracMult),
     or plain, independent terms (numbers; not kets, etc.)."""
     L1 = []; indep = 0
     for k, u in enumerate(expression.terms):
-        if isinstance(u, DiracMult):
+        if isinstance(u, _DiracMult):
             if isinstance(u.factors[0], CreationOperator):
                 L1.append((1, u.factors[0].op, 0, k))
             if isinstance(u.factors[0], AnnihilationOperator):
@@ -650,9 +640,8 @@ def _canonic_suma(expression):
     elif len(L2) == 1:
         expression = L2[0]
     else:
-        expression = DiracSum(*L2)
+        expression = _DiracSum(*L2)
     return expression
-
 
 def _is_equal(u, v):
     """This function returns True if expressions u and v are equal
@@ -673,7 +662,7 @@ def _is_equal(u, v):
                 return True
             else:
                 return False
-        elif isinstance(u, DiracMult):
+        elif isinstance(u, _DiracMult):
             if len(u.factors) != len(v.factors):
                 return False
             else:

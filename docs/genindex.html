@@ -271,11 +271,13 @@ document.write(`
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -286,10 +288,6 @@ document.write(`
 </div>
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.metrics.Adj">Adj() (in module openket.core.metrics)</a>
-</li>
-  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apidoc/classes.html#openket.core.diracobject.AnnihilationOperator">AnnihilationOperator (class in openket.core.diracobject)</a>
 </li>
@@ -302,12 +300,16 @@ document.write(`
       <li><a href="apidoc/classes.html#openket.core.diracobject.Bra">Bra (class in openket.core.diracobject)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/functions.html#openket.core.evolution.build_ode">build_ode() (in module openket.core.evolution)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.metrics.Commutator">Commutator() (in module openket.core.metrics)</a>
+      <li><a href="apidoc/functions.html#openket.core.metrics.comm">comm() (in module openket.core.metrics)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -319,7 +321,7 @@ document.write(`
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.metrics.Dictionary">Dictionary() (in module openket.core.metrics)</a>
+      <li><a href="apidoc/functions.html#openket.core.metrics.dag">dag() (in module openket.core.metrics)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -328,10 +330,18 @@ document.write(`
   </ul></td>
 </tr></table>
 
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/functions.html#openket.core.evolution.gsl_main">gsl_main() (in module openket.core.evolution)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.evolution.InitialCondition">InitialCondition() (in module openket.core.evolution)</a>
+      <li><a href="apidoc/functions.html#openket.core.evolution.init_state">init_state() (in module openket.core.evolution)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -360,7 +370,7 @@ document.write(`
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.metrics.Normalize">Normalize() (in module openket.core.metrics)</a>
+      <li><a href="apidoc/functions.html#openket.core.metrics.normalize">normalize() (in module openket.core.metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -368,6 +378,8 @@ document.write(`
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/functions.html#openket.core.metrics.op2dict">op2dict() (in module openket.core.metrics)</a>
+</li>
       <li>
     openket.core.gates
 
@@ -382,16 +394,18 @@ document.write(`
   </ul></td>
 </tr></table>
 
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/functions.html#openket.core.metrics.ptrace">ptrace() (in module openket.core.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.metrics.Qch">Qch() (in module openket.core.metrics)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.evolution.Qeq">Qeq() (in module openket.core.evolution)</a>
-</li>
-      <li><a href="apidoc/functions.html#openket.core.metrics.Qmatrix">Qmatrix() (in module openket.core.metrics)</a>
+      <li><a href="apidoc/functions.html#openket.core.metrics.qmatrix">qmatrix() (in module openket.core.metrics)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -399,7 +413,11 @@ document.write(`
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.evolution.SubsSol">SubsSol() (in module openket.core.evolution)</a>
+      <li><a href="apidoc/functions.html#openket.core.metrics.sub_qexpr">sub_qexpr() (in module openket.core.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apidoc/functions.html#openket.core.evolution.sym2num">sym2num() (in module openket.core.evolution)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -407,11 +425,7 @@ document.write(`
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.metrics.Trace">Trace() (in module openket.core.metrics)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apidoc/functions.html#openket.core.metrics.TraceOut">TraceOut() (in module openket.core.metrics)</a>
+      <li><a href="apidoc/functions.html#openket.core.metrics.trace">trace() (in module openket.core.metrics)</a>
 </li>
   </ul></td>
 </tr></table>
