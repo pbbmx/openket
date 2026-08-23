@@ -5,6 +5,7 @@
 .f2py_f2cmap
 .idea/
 .vscode/
+deploy.sh
 env
 build
 doc/_build
